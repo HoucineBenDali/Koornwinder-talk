@@ -8,6 +8,7 @@
 \usepackage[export]{adjustbox}
 \usepackage[font=scriptsize,labelfont=scriptsize]{caption}
 \usepackage{tikz}
+\usepackage{appendixnumberbeamer}
 \usetikzlibrary{positioning,patterns,calc}
 \graphicspath{{../Koornwinder_polynomials/}{Example of previous presentation/}{../../Talks/Interpolation_Macdonald_polynomials_ASM_session/}}
 
@@ -137,11 +138,12 @@
 \begin{tikzpicture}[y=1.5cm]
   \foreach \r in {1,2} \foreach \c in {1,...,6} \node[mlqpt] at (\c,\r) {};
   \draw[green!50!black,line width=0.9pt,dashed] (1,2) -- (1,1);
-  \draw[sB] (3,2) to[out=-90,in=180] (3.7,1.52) -- (6.25,1.52) to[out=0,in=90] (6.6,1.25) to[out=-90,in=0] (6.3,1) -- (6,1);
-  \draw[blue!70!black,line width=0.9pt,dotted] (6,2) to[out=-90,in=10] (5.4,1.45) to[out=190,in=90] (5,1);
+  \draw[sB] (3,2) -- (3,1.8) to[out=-90,in=180] (3.7,1.52) -- (6.75,1.52) arc[start angle=90,end angle=-90,x radius=0.22cm,y radius=0.15cm] -- (6.45,1.32) to[out=180,in=90] (6,1);
+  \draw[blue!70!black,line width=0.9pt,dash dot] (6,2) to[out=-90,in=0] (5.45,1.52) to[out=180,in=90] (5,1);
   \foreach \c/\l in {1/3,3/3,6/-2} \node[mlqball] at (\c,2) {$\l$};
   \foreach \c/\l in {1/3,2/-1,5/-2,6/-3} \node[mlqball] at (\c,1) {$\l$};
 \end{tikzpicture}}
+\newif\ifmlqlabels
 \newcommand{\MLQfour}{%
 \begin{tikzpicture}
   \mlqgrid{1}{4}
@@ -150,22 +152,28 @@
   \mlqbottomlayer{1}
   \node[mlqball] at (3,4) {4};
   \node[mlqball] at (3,3) {4};
+  \ifmlqlabels\foreach \c in {1,...,8} \node[font=\mlqlabelfont] at (\c,4.65) {$z_{\c}$};\fi
 \end{tikzpicture}}
+\newcommand{\mlqdy}{0}
+\newcommand{\mlqlabelfont}{\normalsize}
 \newcommand{\MLQfourDecomposed}{%
 \begin{tikzpicture}
-  % top: MLQ with 3 rows (rows 2-4, labels lowered by 1)
+  % top: MLQ with 3 rows (rows 2-4, labels lowered by 1), shifted down by \mlqdy
+  \begin{scope}[shift={(0,-\mlqdy)}]
   \mlqgrid{4.4}{3}
   \draw[sB] (3,6.4) -- (3,5.4);
   \draw[sB] (3,5.4) to[out=-90,in=180] (3.6,4.95) -- (4.4,4.95) to[out=0,in=90] (5,4.4);
   \node[mlqball] at (3,6.4) {3};
   \node[mlqball] at (3,5.4) {3};
   \foreach \c/\l in {2/1,4/1,5/3,6/1} \node[mlqball] at (\c,4.4) {\l};
+  \ifmlqlabels\foreach \c in {1,...,8} \node[font=\mlqlabelfont] at (\c,7.15) {$z_{\c}$};\fi
+  \node[font=\small,align=center,anchor=east] at (-1.3,5.4) {Multiline\\queue};
+  \end{scope}
   % arrows between the two copies of row 2
-  \foreach \c in {1,...,8} \draw[blue!50!black,<->,line width=1pt] (\c,2.65) -- (\c,3.75);
+  \foreach \c in {1,...,8} \draw[blue!50!black,<->,line width=1pt] (\c,2.65) -- (\c,3.75-\mlqdy);
   % bottom: generalized two-line queue
   \mlqgrid{1}{2}
   \mlqbottomlayer{1}
-  \node[font=\small,align=center,anchor=east] at (-1.3,5.4) {Multiline\\queue};
   \node[font=\small,align=center,anchor=east] at (-1.3,1.5) {Generalized\\two-line queue};
 \end{tikzpicture}}
 \begin{document}
@@ -174,7 +182,7 @@
   \titlepage
 \end{frame}
 
-\begin{frame}[t]{Koornwinder polynomials}
+\begin{frame}[t]{Koornwinder polynomials: overview}
 Koornwinder polynomials are Laurent polynomials in $n$ variables, depending on six parameters $q,t,a,b,c,d$.
 \begin{columns}[T]
 \column{0.64\textwidth}
@@ -219,13 +227,58 @@ Macdonald '03}
 {\raggedright\scriptsize {\large$\rstar$} Symmetric case: van Diejen '95. Nonsymmetric case: BD--Williams.\par}
 \end{frame}
 
-\begin{frame}{Two nonsymmetric refinements of the symmetric Koornwinder polynomials}
+\begin{frame}[t]{Notation}
+\begin{itemize}
+  \item A \notion{partition} is $\lambda=(\lambda_1\ge\lambda_2\ge\dots\ge\lambda_n\ge0)$, and a \notion{composition} is $\eta=(\eta_1,\dots,\eta_n)\in\ZZ^n$.
+  \pause
+  \item The finite Weyl group $W_0\simeq S_n\ltimes(\ZZ/2\ZZ)^n$ is the group of \notion{signed permutations}. It acts on $\ZZ^n$ by permuting the entries and changing their signs.
+  \only<2>{%
+  \begin{tikzpicture}[overlay,shift={(1.6,-0.75)},x=1.1cm,
+    dot/.style={circle,inner sep=0pt,draw=blue,fill=white,line width=0.9pt,minimum size=6pt},
+    edge/.style={line width=0.5pt}]
+    \draw[edge] (1,0)--(2.45,0);
+    \draw[edge,dotted] (2.6,0)--(3.4,0);
+    \draw[edge] (3.55,0)--(5,0);
+    \draw[edge,double distance=1.6pt] (5,0)--(6,0);
+    \draw[edge] (5.577,0.11)--(5.423,0)--(5.577,-0.11);
+    \foreach \x/\l in {1/1,2/2,4/n-2,5/n-1,6/n}
+      \node[dot,label={[label distance=1pt]below:{\small$\strut\l$}}] at (\x,0) {};
+  \end{tikzpicture}}
+  \pause
+  \item $W_0\cdot\lambda$ is the set of compositions obtained by permuting the parts of $\lambda$ and changing their signs. For example,
+  \[
+  W_0\cdot(2,0)=\{(2,0),(-2,0),(0,2),(0,-2)\}.
+  \]
+  \vspace{-1.2em}
+  \pause
+  \item We work with Laurent polynomials in $\KK[z_1^{\pm1},\dots,z_n^{\pm1}]$, where $\KK=\QQ(q,t,a,b,c,d)$. The group $W_0$ acts by permuting the variables and inverting them, $z_i\mapsto z_i^{-1}$.
+  \pause
+  \item A Laurent polynomial is \notion{symmetric} if it is invariant under $W_0$.
+\end{itemize}
+\only<6>{%
+\begin{exampleblock}{Example: monomial symmetric Laurent polynomials}
+\[
+m_\lambda=\sum_{\eta\in W_0\cdot\lambda}z^\eta,\qquad\text{e.g.}\quad m_{(2,0)}=z_1^2+z_1^{-2}+z_2^2+z_2^{-2}.
+\]
+\end{exampleblock}}
+\only<7>{%
+\medskip
+\textbf{Indexing:}
+\begin{itemize}
+  \item[$\triangleright$] symmetric polynomials: partitions $\lambda$,
+  \item[$\triangleright$] nonsymmetric Laurent polynomials: compositions $\eta\in\ZZ^n$,
+  \item[$\triangleright$] nonsymmetric type $A$ polynomials (which are homogeneous): $\mu\in\ZZ_{\ge0}^n$.
+\end{itemize}}
+\end{frame}
+
+\begin{frame}[t]{Two nonsymmetric refinements of the symmetric Koornwinder polynomials}
 \centering
 \begin{tikzpicture}[
   fam/.style={draw=uiblink2,rounded corners,line width=0.6pt,fill=uiblink2!5,align=center,inner sep=3pt,font=\footnotesize},
   arr/.style={-latex,line width=0.6pt,uiblink2},
   desc/.style={align=center,font=\footnotesize,text width=3.6cm}]
   \node[fam] (K) at (0,0) {Symmetric Koornwinder polynomials\\[1pt] $K_\lambda(z_1,\dots,z_n;q,t,a,b,c,d)$};
+  \only<2->{
   \node[fam] (E) at (-3.4,-1.9) {Nonsymmetric\\ Koornwinder\\ polynomials $E_\eta$};
   \node[fam] (F) at (3.4,-1.9) {Koornwinder ASEP\\ polynomials $F_\eta$};
   \draw[arr] (K) -- (E);
@@ -233,13 +286,92 @@ Macdonald '03}
   \draw[arr,latex-latex,dashed] (E) -- node[above,font=\scriptsize,text=black!60] {Kasatani '11} (F);
   \node[desc,below=6pt of E] {defined as eigenfunctions of the Cherednik operators};
   \node[desc,below=6pt of F] {defined by the $q$KZ relations};
+  }
 \end{tikzpicture}
 
+\raggedright
+% \only<1>{%
+% \begin{exampleblock}{Example: The symmetric Koornwinder polynomial $K_{(2,0)}$}
+% \vspace{-1.2em}
+% \begin{multline*}
+% K_{(2,0)}=z_1^2+z_1^{-2}+z_2^2+z_2^{-2}+\frac{(1+q)(1-t)}{1-qt}\,(z_1+z_1^{-1})(z_2+z_2^{-1})\\
+% -\frac{(1+q)(1-qt^2)}{(1-qt)(1-q^2t^2abcd)}\big(a+b+c+d-qt(abc+abd+acd+bcd)\big)\\
+% \times(z_1+z_1^{-1}+z_2+z_2^{-1})+\text{constant}.
+% \end{multline*}
+% \end{exampleblock}}
+\only<2->{%
+\begin{prop}[Cantini--Garbali--de Gier--Wheeler '16]
+\[K_\lambda=\sum_{\eta\in W_0\cdot\lambda} F_\eta.\]
+\end{prop}
+\begin{exampleblock}{Example}
+$K_{(2,0)}=F_{(2,0)}+F_{(-2,0)}+F_{(0,2)}+F_{(0,-2)}$.
+\end{exampleblock}}
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}{Definitions of $E_\eta$ and $F_\eta$}
+The affine Hecke algebra $\mathcal H$ of type $\widetilde C_n$ is generated by $T_0,\dots,T_n$, with braid relations given by the diagram and $(T_i-t_i)(T_i+1)=0$.
+\begin{center}
+\vspace{-0.6em}
+\begin{tikzpicture}[x=1.1cm,
+  dot/.style={circle,inner sep=0pt,draw=blue,fill=white,line width=0.9pt,minimum size=6pt},
+  edge/.style={line width=0.5pt}]
+  \draw[edge,double distance=1.6pt] (0,0)--(1,0);
+  \draw[edge] (0.423,0.11)--(0.577,0)--(0.423,-0.11);
+  \draw[edge] (1,0)--(2.45,0);
+  \draw[edge,dotted] (2.6,0)--(3.4,0);
+  \draw[edge] (3.55,0)--(5,0);
+  \draw[edge,double distance=1.6pt] (5,0)--(6,0);
+  \draw[edge] (5.577,0.11)--(5.423,0)--(5.577,-0.11);
+  \foreach \x/\l/\p in {0/0/t_0,1/1/t,2/2/t,4/n-2/t,5/n-1/t,6/n/t_n}
+    \node[dot,label={[label distance=1pt]below:{\small$\strut\l$}},label={[label distance=1pt]above:{\scriptsize$\important{\p}$}}] at (\x,0) {};
+\end{tikzpicture}
+\vspace{-0.6em}
+\end{center}
 \pause
+\begin{columns}[T,onlytextwidth]
+\column{0.415\textwidth}
+\small
+$E_\eta$: eigenfunctions of the \notion{Cherednik operators} (Sahi '99, '00)
+\begin{align*}
+Y_i&=T_i\cdots T_{n-1}T_nT_{n-1}\cdots T_1\\
+&\quad T_0T_1^{-1}\cdots T_{i-1}^{-1},
+\end{align*}
+\[
+Y_iE_\eta=y_i(\eta)\,E_\eta,
+\]
+for $1\le i\le n$, normalized by $[z^\eta]E_\eta=1$.
+\pause
+\column{0.015\textwidth}
+\rule{0.4pt}{0.42\textheight}
+\column{0.565\textwidth}
+\small
+$F_\eta$: the unique family satisfying the \notion{$q$KZ relations} (Kasatani '11), normalized by $[z^\eta]F_\eta=1$:
+\begin{alignat*}{2}
+T_0 F_{\eta_1,\dots}&=q^{\eta_1}F_{\important{-\eta_1},\dots}, &\quad& \eta_1<0,\\
+T_0 F_{\eta_1,\dots}&=t_0\,F_{\eta_1,\dots}, && \eta_1=0,\\
+T_i F_{\dots,\eta_i,\eta_{i+1},\dots}&=t\,F_{\dots,\eta_i,\eta_{i+1},\dots}, && \eta_i=\eta_{i+1},\\
+T_i F_{\dots,\eta_i,\eta_{i+1},\dots}&=F_{\dots,\important{\eta_{i+1},\eta_i},\dots}, && \eta_i>\eta_{i+1},\\
+T_n F_{\dots,\eta_n}&=t_n\,F_{\dots,\eta_n}, && \eta_n=0,\\
+T_n F_{\dots,\eta_n}&=F_{\dots,\important{-\eta_n}}, && \eta_n>0.
+\end{alignat*}
+\end{columns}
+\pause
+\begin{theorem}[Kasatani '11]
+For the antidominant element $\eta=(-\lambda_1,\dots,-\lambda_n)$, we have $E_\eta=F_\eta$.
+\end{theorem}
+\end{frame}
+
+\begin{frame}{Koornwinder polynomials and the multispecies ASEP}
 \begin{columns}[c]
 \column{0.6\textwidth}
 \begin{theorem}[Cantini--Garbali--de Gier--Wheeler '16]
-For suitable $a,b,c,d$ depending on the boundary rates, the stationary probability of a state $\mu$ of the multispecies ASEP with open boundaries on $n$ sites is proportional to $F_\mu(\important{z_1=\dots=z_n=1};\,\important{q=1},t,a,b,c,d)$.
+For $a,b,c,d$ related to the boundary rates $\alpha,\beta,\gamma,\delta$ by an explicit change of variables, the stationary probability of a state $\mu$ of the multispecies ASEP with open boundaries on $n$ sites is proportional to $F_\mu(\important{z_1=\dots=z_n=1};\,\important{q=1},t,a,b,c,d)$.
 \end{theorem}
 \column{0.38\textwidth}
 \centering
@@ -260,9 +392,31 @@ For suitable $a,b,c,d$ depending on the boundary rates, the stationary probabili
   \draw[hop] (s5.north) to[bend left=30] node[rl,above] {$\beta$} (6.2,0.5);
   \draw[hop] (6.2,-0.5) to[bend left=30] node[rl,below] {$\delta$} (s5.south);
 \end{tikzpicture}
+
+{\scriptsize Dynamics of the multispecies ASEP with open boundaries}
 \end{columns}
+\bigskip
+The change of variables is
+\begin{align*}
+\alpha&=\frac{-ac(1-t)}{(1+a)(1+c)}, & \gamma&=\frac{1-t}{(1+a)(1+c)},\\
+\beta&=\frac{-bd(1-t)}{(1+b)(1+d)}, & \delta&=\frac{1-t}{(1+b)(1+d)}.
+\end{align*}
 \end{frame}
 
+\begin{frame}{Top homogeneous parts and type $A$}
+\begin{itemize}
+  \item In type $A$, the symmetric Macdonald polynomials have two nonsymmetric refinements, indexed by $\mu\in\ZZ_{\ge0}^n$: the nonsymmetric Macdonald polynomials $E^{\important{A}}_\mu$ and the ASEP polynomials $F^{\important{A}}_\mu$.
+  \item For a Laurent polynomial $f$, we denote by $\Top(f)$ its top homogeneous part.
+\end{itemize}
+\begin{theorem}[BD--Williams]
+For $\mu\in\ZZ_{\ge0}^n$,
+\[
+\Top(F_\mu)=F^{\important{A}}_\mu,\qquad
+\Top\big(E_\mu(z_1,\dots,z_n;q,t)\big)=E^{\important{A}}_{\mu^{\mathrm{rev}}}(z_n,\dots,z_1;q^{-1},t^{-1}),
+\]
+where $\mu^{\mathrm{rev}}=(\mu_n,\dots,\mu_1)$.
+\end{theorem}
+\end{frame}
 
 \begin{frame}{Some examples of Koornwinder ASEP polynomials for $n=3$}
 \scriptsize
@@ -307,131 +461,6 @@ $F_{(0,2,1)}=$\par\smallskip
 \adjustbox{max width=\textwidth, max totalheight=0.66\textheight}{%
 \parbox{27cm}{\raggedright\small
 $\input{F021_terms}$}}
-\end{frame}
-
-
-\begin{frame}{The affine Weyl group of type $\widetilde C_n$}
-The affine Weyl group $W$ of type $\widetilde C_n$ is generated by $s_0,s_1,\dots,s_n$ with relations
-\begin{align*}
-s_is_j&=s_js_i, && |i-j|\ge 2,\\
-s_is_{i+1}s_i&=s_{i+1}s_is_{i+1}, && 1\le i<n-1,\\
-s_0s_1s_0s_1&=s_1s_0s_1s_0,\\
-s_{n-1}s_ns_{n-1}s_n&=s_ns_{n-1}s_ns_{n-1},\\
-s_i^2&=1, && 0\le i\le n.
-\end{align*}
-\begin{center}
-\begin{tikzpicture}[x=1.2cm,
-  dot/.style={circle,inner sep=0pt,draw=blue,fill=white,line width=0.9pt,minimum size=6pt},
-  edge/.style={line width=0.5pt}]
-  \draw[edge,double distance=1.6pt] (0,0)--(1,0);
-  \draw[edge] (0.423,0.11)--(0.577,0)--(0.423,-0.11);
-  \draw[edge] (1,0)--(2.45,0);
-  \draw[edge,dotted] (2.6,0)--(3.4,0);
-  \draw[edge] (3.55,0)--(5,0);
-  \draw[edge,double distance=1.6pt] (5,0)--(6,0);
-  \draw[edge] (5.577,0.11)--(5.423,0)--(5.577,-0.11);
-  \foreach \x/\l in {0/0,1/1,2/2,4/n-2,5/n-1,6/n}
-    \node[dot,label={[label distance=1pt]below:{\small$\strut\l$}}] at (\x,0) {};
-\end{tikzpicture}
-\end{center}
-The finite Weyl group $W_0=\langle s_1,\dots,s_n\rangle\simeq S_n\ltimes(\ZZ/2\ZZ)^n$ is the group of signed permutations.
-\end{frame}
-
-\begin{frame}{The affine Weyl group of type $\widetilde C_n$}
-\begin{center}
-\begin{tikzpicture}[x=1.2cm,
-  dot/.style={circle,inner sep=0pt,draw=blue,fill=white,line width=0.9pt,minimum size=6pt},
-  edge/.style={line width=0.5pt}]
-  \draw[edge,double distance=1.6pt] (0,0)--(1,0);
-  \draw[edge] (0.423,0.11)--(0.577,0)--(0.423,-0.11);
-  \draw[edge] (1,0)--(2.45,0);
-  \draw[edge,dotted] (2.6,0)--(3.4,0);
-  \draw[edge] (3.55,0)--(5,0);
-  \draw[edge,double distance=1.6pt] (5,0)--(6,0);
-  \draw[edge] (5.577,0.11)--(5.423,0)--(5.577,-0.11);
-  \foreach \x/\l in {0/0,1/1,2/2,4/n-2,5/n-1,6/n}
-    \node[dot,label={[label distance=1pt]below:{\small$\strut\l$}}] at (\x,0) {};
-\end{tikzpicture}
-\end{center}
-$W$ acts on Laurent polynomials in $z_1,\dots,z_n$ by
-\begin{align*}
-s_i(z_1,\dots,z_i,z_{i+1},\dots,z_n)
-  &= (z_1,\dots,z_{i+1},z_i,\dots,z_n), && 1\le i<n,\\
-s_n(z_1,\dots,z_{n-1},z_n)
-  &= (z_1,\dots,z_{n-1},z_n^{-1}),\\
-s_0(z_1,z_2,\dots,z_n)
-  &= (\important{q}z_1^{-1},z_2,\dots,z_n).
-\end{align*}
-\pause
-A Laurent polynomial is symmetric if it is invariant under the action of $W_0$.
-
-\begin{exampleblock}{Example: The symmetric Koornwinder polynomial $K_{(2,0)}$}
-\vspace{-1.2em}
-\begin{multline*}
-K_{(2,0)}=z_1^2+z_1^{-2}+z_2^2+z_2^{-2}+\frac{(1+q)(1-t)}{1-qt}\,(z_1+z_1^{-1})(z_2+z_2^{-1})\\
--\frac{(1+q)(1-qt^2)}{(1-qt)(1-q^2t^2abcd)}\big(a+b+c+d-qt(abc+abd+acd+bcd)\big)\\
-\times(z_1+z_1^{-1}+z_2+z_2^{-1})+\text{constant}.
-\end{multline*}
-\end{exampleblock}
-\end{frame}
-
-\begin{frame}{The affine Hecke algebra $\mathcal H$ of type $\widetilde C_n$}
-The affine Hecke algebra $\mathcal H$ is generated by $T_0,T_1,\dots,T_n$, subject to the braid relations
-\begin{align*}
-T_iT_j&=T_jT_i, && |i-j|\ge 2,\\
-T_iT_{i+1}T_i&=T_{i+1}T_iT_{i+1}, && 1\le i<n-1,\\
-T_0T_1T_0T_1&=T_1T_0T_1T_0,\\
-T_{n-1}T_nT_{n-1}T_n&=T_nT_{n-1}T_nT_{n-1},
-\end{align*}
-and the quadratic relations
-\[
-(T_i-t_i)(T_i+1)=0,\qquad 0\le i\le n,
-\]
-where $\important{t_0=-ac/q}$, $\important{t_i=t}$ for $1\le i<n$, and $\important{t_n=-bd}$.
-\begin{center}
-\begin{tikzpicture}[x=1.2cm,
-  dot/.style={circle,inner sep=0pt,draw=blue,fill=white,line width=0.9pt,minimum size=6pt},
-  edge/.style={line width=0.5pt}]
-  \draw[edge,double distance=1.6pt] (0,0)--(1,0);
-  \draw[edge] (0.423,0.11)--(0.577,0)--(0.423,-0.11);
-  \draw[edge] (1,0)--(2.45,0);
-  \draw[edge,dotted] (2.6,0)--(3.4,0);
-  \draw[edge] (3.55,0)--(5,0);
-  \draw[edge,double distance=1.6pt] (5,0)--(6,0);
-  \draw[edge] (5.577,0.11)--(5.423,0)--(5.577,-0.11);
-  \foreach \x/\l/\p in {0/0/t_0,1/1/t,2/2/t,4/n-2/t,5/n-1/t,6/n/t_n}
-    \node[dot,label={[label distance=1pt]below:{\small$\strut\l$}},label={[label distance=1pt]above:{$\important{\p}$}}] at (\x,0) {};
-\end{tikzpicture}
-\end{center}
-When $t_i=1$ for all $0\le i\le n$, we get back the affine Weyl group $W$, where $T_i$ corresponds to $s_i$.
-\end{frame}
-
-\begin{frame}{Polynomial representation of $\mathcal H$}
-The affine Hecke algebra $\mathcal H$ acts on Laurent polynomials in $z_1,\dots,z_n$ by the Demazure--Lusztig operators
-\begin{align*}
-T_i &= t + \frac{t z_i-z_{i+1}}{z_i-z_{i+1}}\,(s_i-1),
-&& 1\le i<n,\\
-T_n &= -bd + \frac{(1-b z_n)(1-d z_n)}{1-z_n^2}\,(s_n-1),\\
-T_0 &= -\frac{ac}{q} + \frac{(1-a/z_1)(1-c/z_1)}{1-q/z_1^2}\,(s_0-1).
-\end{align*}
-
-\begin{theorem}[Sahi '99]
-This representation is faithful.
-\end{theorem}
-% Oral remark: as a consequence, we don't lose anything by thinking of $\mathcal H$ just through these expressions.
-\end{frame}
-
-\begin{frame}{Koornwinder ASEP polynomials}
-Fix a partition $\lambda$. The Koornwinder ASEP polynomials $\{F_\eta\}_{\eta\in W_0\cdot\lambda}$ are the unique family of Laurent polynomials, normalized by $[z^\eta]F_\eta=1$, satisfying the $q$KZ relations (Kasatani '11)
-\begin{align*}
-T_0 F_{\eta_1,\eta_2,\dots,\eta_n}&=q^{\eta_1}F_{\important{-\eta_1},\eta_2,\dots,\eta_n}, && \eta_1<0,\\
-T_0 F_{\eta_1,\eta_2,\dots,\eta_n}&=t_0\,F_{\eta_1,\eta_2,\dots,\eta_n}, && \eta_1=0,\\
-T_i F_{\dots,\eta_i,\eta_{i+1},\dots}&=t\,F_{\dots,\eta_i,\eta_{i+1},\dots}, && \eta_i=\eta_{i+1},\ 1\le i<n,\\
-T_i F_{\dots,\eta_i,\eta_{i+1},\dots}&=F_{\dots,\important{\eta_{i+1},\eta_i},\dots}, && \eta_i>\eta_{i+1},\ 1\le i<n,\\
-T_n F_{\dots,\eta_n}&=t_n\,F_{\dots,\eta_n}, && \eta_n=0,\\
-T_n F_{\dots,\eta_n}&=F_{\dots,\important{-\eta_n}}, && \eta_n>0.
-\end{align*}
-Recall that $t_0=-ac/q$ and $t_n=-bd$.
 \end{frame}
 
 \begin{frame}{Branching rules for Schur polynomials}
@@ -496,7 +525,7 @@ These branching rules have two limitations:
 
 \begin{frame}{Type A: multiline queues}
 \begin{center}
-\resizebox{0.62\textwidth}{!}{\MLQfour}
+\mlqlabelstrue\resizebox{0.62\textwidth}{!}{\MLQfour}
 
 {\small A multiline queue (MLQ) with $4$ rows, of type $(2,2,0,0,0,4,2,1)$.}
 \end{center}
@@ -525,7 +554,10 @@ where $\kappa^-_i=\max\{\kappa_i-1,0\}$, and $c^\mu_\kappa(q,t)$ is the generati
 
 \begin{frame}{Type A two-row recurrence}
 \begin{center}
-\adjustbox{width=0.45\textwidth}{\MLQfour}
+\mlqlabelstrue\renewcommand{\mlqdy}{0.5}\renewcommand{\mlqlabelfont}{\Large}%
+\adjustbox{max height=0.28\textheight,max width=0.38\textwidth,valign=c}{\MLQfour}
+$\equiv$
+\adjustbox{max height=0.34\textheight,max width=0.52\textwidth,valign=c}{\MLQfourDecomposed}
 \end{center}
 \vspace{0.4em}
 \[
@@ -568,6 +600,7 @@ F^A_\kappa(z_1,\dots,z_n;q,t)=\prod_{i:\,\kappa_i>0}z_i\sum_{\mu\in S_n\cdot\kap
   \end{scope}
 \end{tikzpicture}}
 \end{center}
+\uncover<4->{\textbf{Remark.} One may think of this as a \emph{transposed} branching rule: instead of removing one column, we remove one row.}
 \end{frame}
 
 \begin{frame}{Two-row recurrence for Koornwinder polynomials}
@@ -723,6 +756,17 @@ Example: for $\lambda=(3,2,2,1,1,0)$,
 \]
 \end{frame}
 
+\begin{frame}{Main proof idea}
+\begin{itemize}
+  \item Use the double affine Hecke algebra of type $(C^\vee,C)$ (Sahi '99) to define a \important{refinement of the polynomial representation}, in which we have a formal copy $\mathsf Z_1,\dots,\mathsf Z_n$ of the variables $z_1,\dots,z_n$.
+  \item We then define \important{refined polynomials} $\widehat E_\kappa$ and $\widehat F_\kappa$, with
+  \[
+  \widehat F_\kappa=\sum_{(\nu,\mu)}a_\kappa^\mu(\nu)\,\mathsf Z^\nu F_\mu.
+  \]
+  \item Replacing $\mathsf Z_i$ by $z_i$ sends $\widehat E_\kappa\mapsto E_\kappa$ and $\widehat F_\kappa\mapsto F_\kappa$, which gives Theorem~A.
+\end{itemize}
+\end{frame}
+
 \begin{frame}{Local rules}
 \begin{thmB}
 The \important{two-line configurations} are characterized by a family of \important{local rules}.
@@ -864,6 +908,132 @@ For $\mu\in\ZZ_{\ge0}^n$,
 \Top\big(E_\mu(z_1,\dots,z_n;q,t)\big)=E^A_{\mu^{\mathrm{rev}}}(z_n,\dots,z_1;q^{-1},t^{-1}).
 \]
 \end{thmC}
+\end{frame}
+
+\appendix
+
+\begin{frame}{The affine Weyl group of type $\widetilde C_n$}
+The affine Weyl group $W$ of type $\widetilde C_n$ is generated by $s_0,s_1,\dots,s_n$ with relations
+\begin{align*}
+s_is_j&=s_js_i, && |i-j|\ge 2,\\
+s_is_{i+1}s_i&=s_{i+1}s_is_{i+1}, && 1\le i<n-1,\\
+s_0s_1s_0s_1&=s_1s_0s_1s_0,\\
+s_{n-1}s_ns_{n-1}s_n&=s_ns_{n-1}s_ns_{n-1},\\
+s_i^2&=1, && 0\le i\le n.
+\end{align*}
+\begin{center}
+\begin{tikzpicture}[x=1.2cm,
+  dot/.style={circle,inner sep=0pt,draw=blue,fill=white,line width=0.9pt,minimum size=6pt},
+  edge/.style={line width=0.5pt}]
+  \draw[edge,double distance=1.6pt] (0,0)--(1,0);
+  \draw[edge] (0.423,0.11)--(0.577,0)--(0.423,-0.11);
+  \draw[edge] (1,0)--(2.45,0);
+  \draw[edge,dotted] (2.6,0)--(3.4,0);
+  \draw[edge] (3.55,0)--(5,0);
+  \draw[edge,double distance=1.6pt] (5,0)--(6,0);
+  \draw[edge] (5.577,0.11)--(5.423,0)--(5.577,-0.11);
+  \foreach \x/\l in {0/0,1/1,2/2,4/n-2,5/n-1,6/n}
+    \node[dot,label={[label distance=1pt]below:{\small$\strut\l$}}] at (\x,0) {};
+\end{tikzpicture}
+\end{center}
+The finite Weyl group $W_0=\langle s_1,\dots,s_n\rangle\simeq S_n\ltimes(\ZZ/2\ZZ)^n$ is the group of signed permutations.
+\end{frame}
+
+\begin{frame}{The affine Weyl group of type $\widetilde C_n$}
+\begin{center}
+\begin{tikzpicture}[x=1.2cm,
+  dot/.style={circle,inner sep=0pt,draw=blue,fill=white,line width=0.9pt,minimum size=6pt},
+  edge/.style={line width=0.5pt}]
+  \draw[edge,double distance=1.6pt] (0,0)--(1,0);
+  \draw[edge] (0.423,0.11)--(0.577,0)--(0.423,-0.11);
+  \draw[edge] (1,0)--(2.45,0);
+  \draw[edge,dotted] (2.6,0)--(3.4,0);
+  \draw[edge] (3.55,0)--(5,0);
+  \draw[edge,double distance=1.6pt] (5,0)--(6,0);
+  \draw[edge] (5.577,0.11)--(5.423,0)--(5.577,-0.11);
+  \foreach \x/\l in {0/0,1/1,2/2,4/n-2,5/n-1,6/n}
+    \node[dot,label={[label distance=1pt]below:{\small$\strut\l$}}] at (\x,0) {};
+\end{tikzpicture}
+\end{center}
+$W$ acts on Laurent polynomials in $z_1,\dots,z_n$ by
+\begin{align*}
+s_i(z_1,\dots,z_i,z_{i+1},\dots,z_n)
+  &= (z_1,\dots,z_{i+1},z_i,\dots,z_n), && 1\le i<n,\\
+s_n(z_1,\dots,z_{n-1},z_n)
+  &= (z_1,\dots,z_{n-1},z_n^{-1}),\\
+s_0(z_1,z_2,\dots,z_n)
+  &= (\important{q}z_1^{-1},z_2,\dots,z_n).
+\end{align*}
+\pause
+A Laurent polynomial is symmetric if it is invariant under the action of $W_0$.
+
+\begin{exampleblock}{Example: The symmetric Koornwinder polynomial $K_{(2,0)}$}
+\vspace{-1.2em}
+\begin{multline*}
+K_{(2,0)}=z_1^2+z_1^{-2}+z_2^2+z_2^{-2}+\frac{(1+q)(1-t)}{1-qt}\,(z_1+z_1^{-1})(z_2+z_2^{-1})\\
+-\frac{(1+q)(1-qt^2)}{(1-qt)(1-q^2t^2abcd)}\big(a+b+c+d-qt(abc+abd+acd+bcd)\big)\\
+\times(z_1+z_1^{-1}+z_2+z_2^{-1})+\text{constant}.
+\end{multline*}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}{The affine Hecke algebra $\mathcal H$ of type $\widetilde C_n$}
+The affine Hecke algebra $\mathcal H$ is generated by $T_0,T_1,\dots,T_n$, subject to the braid relations
+\begin{align*}
+T_iT_j&=T_jT_i, && |i-j|\ge 2,\\
+T_iT_{i+1}T_i&=T_{i+1}T_iT_{i+1}, && 1\le i<n-1,\\
+T_0T_1T_0T_1&=T_1T_0T_1T_0,\\
+T_{n-1}T_nT_{n-1}T_n&=T_nT_{n-1}T_nT_{n-1},
+\end{align*}
+and the quadratic relations
+\[
+(T_i-t_i)(T_i+1)=0,\qquad 0\le i\le n,
+\]
+where $\important{t_0=-ac/q}$, $\important{t_i=t}$ for $1\le i<n$, and $\important{t_n=-bd}$.
+\begin{center}
+\begin{tikzpicture}[x=1.2cm,
+  dot/.style={circle,inner sep=0pt,draw=blue,fill=white,line width=0.9pt,minimum size=6pt},
+  edge/.style={line width=0.5pt}]
+  \draw[edge,double distance=1.6pt] (0,0)--(1,0);
+  \draw[edge] (0.423,0.11)--(0.577,0)--(0.423,-0.11);
+  \draw[edge] (1,0)--(2.45,0);
+  \draw[edge,dotted] (2.6,0)--(3.4,0);
+  \draw[edge] (3.55,0)--(5,0);
+  \draw[edge,double distance=1.6pt] (5,0)--(6,0);
+  \draw[edge] (5.577,0.11)--(5.423,0)--(5.577,-0.11);
+  \foreach \x/\l/\p in {0/0/t_0,1/1/t,2/2/t,4/n-2/t,5/n-1/t,6/n/t_n}
+    \node[dot,label={[label distance=1pt]below:{\small$\strut\l$}},label={[label distance=1pt]above:{$\important{\p}$}}] at (\x,0) {};
+\end{tikzpicture}
+\end{center}
+When $t_i=1$ for all $0\le i\le n$, we get back the affine Weyl group $W$, where $T_i$ corresponds to $s_i$.
+\end{frame}
+
+\begin{frame}{Polynomial representation of $\mathcal H$}
+The affine Hecke algebra $\mathcal H$ acts on Laurent polynomials in $z_1,\dots,z_n$ by the Demazure--Lusztig operators
+\begin{align*}
+T_i &= t + \frac{t z_i-z_{i+1}}{z_i-z_{i+1}}\,(s_i-1),
+&& 1\le i<n,\\
+T_n &= -bd + \frac{(1-b z_n)(1-d z_n)}{1-z_n^2}\,(s_n-1),\\
+T_0 &= -\frac{ac}{q} + \frac{(1-a/z_1)(1-c/z_1)}{1-q/z_1^2}\,(s_0-1).
+\end{align*}
+
+\begin{theorem}[Sahi '99]
+This representation is faithful.
+\end{theorem}
+% Oral remark: as a consequence, we don't lose anything by thinking of $\mathcal H$ just through these expressions.
+\end{frame}
+
+\begin{frame}{Koornwinder ASEP polynomials}
+Fix a partition $\lambda$. The Koornwinder ASEP polynomials $\{F_\eta\}_{\eta\in W_0\cdot\lambda}$ are the unique family of Laurent polynomials, normalized by $[z^\eta]F_\eta=1$, satisfying the $q$KZ relations (Kasatani '11)
+\begin{align*}
+T_0 F_{\eta_1,\eta_2,\dots,\eta_n}&=q^{\eta_1}F_{\important{-\eta_1},\eta_2,\dots,\eta_n}, && \eta_1<0,\\
+T_0 F_{\eta_1,\eta_2,\dots,\eta_n}&=t_0\,F_{\eta_1,\eta_2,\dots,\eta_n}, && \eta_1=0,\\
+T_i F_{\dots,\eta_i,\eta_{i+1},\dots}&=t\,F_{\dots,\eta_i,\eta_{i+1},\dots}, && \eta_i=\eta_{i+1},\ 1\le i<n,\\
+T_i F_{\dots,\eta_i,\eta_{i+1},\dots}&=F_{\dots,\important{\eta_{i+1},\eta_i},\dots}, && \eta_i>\eta_{i+1},\ 1\le i<n,\\
+T_n F_{\dots,\eta_n}&=t_n\,F_{\dots,\eta_n}, && \eta_n=0,\\
+T_n F_{\dots,\eta_n}&=F_{\dots,\important{-\eta_n}}, && \eta_n>0.
+\end{align*}
+Recall that $t_0=-ac/q$ and $t_n=-bd$.
 \end{frame}
 
 \end{document}
