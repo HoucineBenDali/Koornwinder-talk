@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# LaTeX build files
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+build/
+
+# Sage-generated files
+*.sage.py
+*.sobj
+
+# local material not needed to compile the talk
+style_samples/
