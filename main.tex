@@ -187,8 +187,10 @@ Koornwinder polynomials are Laurent polynomials in $n$ variables, depending on s
 \begin{columns}[T]
 \column{0.64\textwidth}
 \begin{itemize}
-  \item Koornwinder '92: \notion{symmetric} polynomials, indexed by partitions, introduced as multivariable orthogonal polynomials generalizing the Askey--Wilson polynomials (one variable).
+  \item Koornwinder '92: \notion{symmetric} polynomials, indexed by partitions, introduced as multivariable orthogonal polynomials.
+  \item Cherednik '95: introduced double affine Hecke algebras of reduced types.
   \item Sahi '99, '00: double affine Hecke algebra of type $(C^\vee,C)$, used to prove Macdonald's duality conjecture for Koornwinder polynomials and to define the \notion{nonsymmetric} Koornwinder polynomials.
+  \item Stokman '00: orthogonality of nonsymmetric Koornwinder polynomials.
 \end{itemize}
 \column{0.33\textwidth}
 \centering
@@ -202,7 +204,7 @@ $\Longrightarrow$ They generalize several families from symmetric function theor
 
 \end{frame}
 
-\begin{frame}{A family of families}
+\begin{frame}{Koornwinder polynomials: overview}
 \centering
 \begin{tikzpicture}[
   fam/.style={draw=uiblink2,rounded corners,line width=0.6pt,fill=uiblink2!5,align=center,inner sep=3pt,font=\footnotesize},
@@ -214,7 +216,7 @@ $\Longrightarrow$ They generalize several families from symmetric function theor
   \node[fam] (BC) at (3.85,-2.3) {Macdonald polynomials\\ of types $B$, $C$, $D$, \dots\\[1pt] {\scriptsize parameters: $q,t$,}\\[-1pt] {\scriptsize and some of $a,b,c,d$}};
   \node[fam] (J) at (-1.2,-3.95) {Jack\\[1pt] {\scriptsize parameter: $\alpha$}};
   \node[fam] (HL) at (1.2,-3.95) {Hall--Littlewood\\[1pt] {\scriptsize parameter: $t$}};
-  \node[fam] (S) at (0,-5.4) {Schur, key polynomials, Demazure atoms\\[1pt] {\scriptsize no parameter}};
+  \node[fam] (S) at (0,-5.4) {Schur, key polynomials, Demazure atoms};
   \draw[arr] (K.west) -- node[lab,sloped,above] {one variable} (AW.north);
   \draw[arr] (K) -- node[lab,right=2pt] {top homogeneous\\ part {\large$\rstar$}} (A);
   \draw[arr] (K.east) -- node[lab,sloped,above] {specialization} (BC.north);
@@ -227,6 +229,50 @@ $\Longrightarrow$ They generalize several families from symmetric function theor
 \vfill
 {\raggedright\scriptsize {\large$\rstar$} Symmetric case: van Diejen '95. Nonsymmetric case: BD--Williams.\par}
 \end{frame}
+
+\begin{frame}{Motivations and previous results}
+\begin{itemize}\setlength{\itemsep}{1.2em}
+  \item \textbf{Combinatorics.} Alcove walks (Ram--Yip '11, Colmenarejo--Gagnon--Ram '26); the case $\lambda=(1,\dots,1,0,\dots,0)$ (Corteel--Mandelshtam--Williams '24).\\
+  $\blacktriangleright$ \important{Problem:} a combinatorial formula generalizing type $A$ (Haglund--Haiman--Loehr '05, Corteel--Mandelshtam--Williams '22).
+  \pause
+  \item \textbf{Integrability.} Vertex models for Schur (Brubaker--Bump--Friedberg '11), Hall--Littlewood (Tsilevich '06) and nonsymmetric Macdonald polynomials (Borodin--Wheeler '22); only special cases for Koornwinder (Wheeler--Zinn-Justin '16, Finn--Vanicat '17).\\
+  $\blacktriangleright$ \important{Problem:} a vertex model for Koornwinder polynomials.
+  \pause
+  \item \textbf{Particle models.} At $q=1$ and $z_i=1$: the multispecies open ASEP (Cantini--Garbali--de Gier--Wheeler '16).\\
+  $\blacktriangleright$ \important{Problem:} a particle model without specializing the variables, in the same vein as the $t$-PushTASEP (Ayyer--Martin--Williams '24) and the interpolation $t$-PushTASEP (BD--Williams '26) in type $A$.
+\end{itemize}
+\end{frame}
+
+% Detailed version of the motivations slide (not shown)
+% \begin{frame}{Motivations and previous results}
+% \setbeamerfont{itemize/enumerate body}{size=\footnotesize}
+% \setbeamerfont{itemize/enumerate subbody}{size=\footnotesize}
+% \footnotesize
+% \vspace{-0.5em}
+% \begin{itemize}
+%   \item \textbf{Combinatorics.}
+%   \begin{itemize}
+%     \item Alcove walks (Ram--Yip '11), compressed version (Colmenarejo--Gagnon--Ram '26).
+%     \item $\lambda=(1,\dots,1,0,\dots,0)$: rhombic staircase tableaux (Corteel--Mandelshtam--Williams '24).
+%   \end{itemize}
+%   $\blacktriangleright$ \important{Problem:} a combinatorial formula for Koornwinder polynomials generalizing the celebrated type $A$ results (Haglund--Haiman--Loehr '05, Corteel--Mandelshtam--Williams '22).
+%   \pause
+%   \item \textbf{Integrability.}
+%   \begin{itemize}
+%     \item Vertex models for Schur (Brubaker--Bump--Friedberg '11), Hall--Littlewood (Tsilevich '06) and nonsymmetric Macdonald polynomials (Borodin--Wheeler '22).
+%     \item Koornwinder: type $BC$ Hall--Littlewood degenerations (Wheeler--Zinn-Justin '16), rectangular partitions (Finn--Vanicat '17).
+%   \end{itemize}
+%   $\blacktriangleright$ \important{Problem:} a vertex model for Koornwinder polynomials.
+%   \pause
+%   \item \textbf{Particle models.}
+%   \begin{itemize}
+%     \item Macdonald: ASEP on a ring (Cantini--de Gier--Wheeler '15), $q=1$, $z_i=1$; $t$-PushTASEP (Ayyer--Martin--Williams '24), $q=1$.
+%     \item Interpolation Macdonald: BD--Williams (in preparation), $q=1$.
+%     \item Koornwinder: open ASEP (Cantini--Garbali--de Gier--Wheeler '16), $q=1$, $z_i=1$.
+%   \end{itemize}
+%   $\blacktriangleright$ \important{Problem:} a particle model for Koornwinder polynomials at $q=1$ without specializing the variables.
+% \end{itemize}
+% \end{frame}
 
 \begin{frame}{Main results (BD--Williams)}
 \begin{thmA}[two-row recurrence]
@@ -461,36 +507,6 @@ $F_{(0,2,1)}=$\par\smallskip
 $\input{F021_terms}$}}
 \end{frame}
 
-\begin{frame}{Motivations and previous results}
-\setbeamerfont{itemize/enumerate body}{size=\footnotesize}
-\setbeamerfont{itemize/enumerate subbody}{size=\footnotesize}
-\footnotesize
-\vspace{-0.5em}
-\begin{itemize}
-  \item \textbf{Combinatorics.}
-  \begin{itemize}
-    \item Alcove walks (Ram--Yip '11), compressed version (Colmenarejo--Gagnon--Ram '26).
-    \item $\lambda=(1,\dots,1,0,\dots,0)$: rhombic staircase tableaux (Corteel--Mandelshtam--Williams '24).
-  \end{itemize}
-  $\blacktriangleright$ \important{Problem:} a combinatorial formula for Koornwinder polynomials generalizing the celebrated type $A$ results (Haglund--Haiman--Loehr '05, Corteel--Mandelshtam--Williams '22).
-  \pause
-  \item \textbf{Integrability.}
-  \begin{itemize}
-    \item Vertex models for Schur (Brubaker--Bump--Friedberg '11), Hall--Littlewood (Tsilevich '06) and nonsymmetric Macdonald polynomials (Borodin--Wheeler '22).
-    \item Koornwinder: type $BC$ Hall--Littlewood degenerations (Wheeler--Zinn-Justin '16), rectangular partitions (Finn--Vanicat '17).
-  \end{itemize}
-  $\blacktriangleright$ \important{Problem:} a vertex model for Koornwinder polynomials.
-  \pause
-  \item \textbf{Particle models.}
-  \begin{itemize}
-    \item Macdonald: ASEP on a ring (Cantini--de Gier--Wheeler '15), $q=1$, $z_i=1$; $t$-PushTASEP (Ayyer--Martin--Williams '24), $q=1$.
-    \item Interpolation Macdonald: BD--Williams (in preparation), $q=1$.
-    \item Koornwinder: open ASEP (Cantini--Garbali--de Gier--Wheeler '16), $q=1$, $z_i=1$.
-  \end{itemize}
-  $\blacktriangleright$ \important{Problem:} a particle model for Koornwinder polynomials at $q=1$ without specializing the variables.
-\end{itemize}
-\end{frame}
-
 \begin{frame}{Branching rules for symmetric polynomials}
 \[
 s_\lambda(z_1,\dots,z_n)=\sum_{\substack{\mu\subseteq\lambda\\ \lambda/\mu\text{ horizontal strip}}} z_n^{|\lambda|-|\mu|}\,s_\mu(z_1,\dots,z_{n-1}).
@@ -628,12 +644,58 @@ F^A_\kappa(z_1,\dots,z_n;q,t)=\prod_{i:\,\kappa_i>0}z_i\sum_{\mu\in S_n\cdot\kap
   \end{scope}
 \end{tikzpicture}}
 \end{center}
-\uncover<4->{\textbf{Remark.} One may think of this as a \emph{transposed} branching rule: instead of removing one column, we remove one row.}
+\uncover<4->{%
+\begin{itemize}
+  \item One may think of this as a \emph{transposed} branching rule: instead of removing one column, we remove one row.
+\end{itemize}}
+\end{frame}
+
+\begin{frame}{Interpolation Macdonald polynomials}
+\begin{itemize}
+  \item A variant of the two-row recurrence technique was used to give a combinatorial formula for interpolation Macdonald polynomials (BD--Williams '25).
+\end{itemize}
+\[
+\includegraphics[width=0.47\textwidth,valign=c]{figures/GhostMLQ_colored.pdf}
+\;\equiv\;
+\includegraphics[width=0.47\textwidth,valign=c]{figures/GhostMLQ_decomposed_colored.pdf}
+\]
 \end{frame}
 
 \begin{frame}{Two-row recurrence for Koornwinder polynomials}
+For $k\in\ZZ$, let $\Sign(k)\in\{-1,0,1\}$ be the sign of $k$.
+\pause
+
+For $\kappa\in\ZZ^n$, let $\kappa^-$ be obtained from $\kappa$ by decreasing the absolute value of each nonzero part by $1$, i.e.\ by removing the basement cells.
+\begin{center}
+\begin{tikzpicture}[scale=0.4]
+  % kappa
+  \draw[line width=0.8pt] (0,0) -- (6,0);
+  \foreach \c/\h in {1/2,4/3,6/1}
+    \foreach \r in {1,...,\h}
+      \draw[fill=black!12] (\c-1,\r-1) rectangle (\c,\r);
+  \foreach \c/\h in {2/1,5/2}
+    \foreach \r in {1,...,\h}
+      \draw[fill=black!12] (\c-1,-\r) rectangle (\c,-\r+1);
+  \foreach \c in {1,4,6}
+    \draw[fill=uibred!35] (\c-1,0) rectangle (\c,1);
+  \foreach \c in {2,5}
+    \draw[fill=uibred!35] (\c-1,-1) rectangle (\c,0);
+  \node[anchor=north,font=\small] at (3,-2.2) {$\kappa=(2,-1,0,3,-2,1)$};
+  % kappa^-
+  \draw[->,line width=0.8pt] (7.5,0.5) -- (10.5,0.5);
+  \begin{scope}[shift={(12,0)}]
+  \draw[line width=0.8pt] (0,0) -- (6,0);
+  \foreach \c/\h in {1/1,4/2}
+    \foreach \r in {1,...,\h}
+      \draw[fill=black!12] (\c-1,\r-1) rectangle (\c,\r);
+  \draw[fill=black!12] (4,-1) rectangle (5,0);
+  \node[anchor=north,font=\small] at (3,-2.2) {$\kappa^-=(1,0,0,2,-1,0)$};
+  \end{scope}
+\end{tikzpicture}
+\end{center}
+\pause
 \begin{thmA}[BD--Williams '26]
-For $\kappa\in\ZZ^n$, set $(\kappa^-)_i=\kappa_i-\Sign(\kappa_i)$. Then
+For $\kappa\in\ZZ^n$,
 \[
 F_\kappa(z_1,\dots,z_n;q,t,a,b,c,d)=\sum_{(\nu,\mu)}a_\kappa^\mu(\nu)\,z^\nu F_\mu(z_1,\dots,z_n;q,t,a,b,c,d),
 \]
@@ -787,11 +849,12 @@ Example: for $\lambda=(3,2,2,1,1,0)$,
 \begin{frame}{Main proof idea}
 \begin{itemize}
   \item Use the double affine Hecke algebra of type $(C^\vee,C)$ (Sahi '99) to define a \important{refinement of the polynomial representation}, in which we have a formal copy $\mathsf Z_1,\dots,\mathsf Z_n$ of the variables $z_1,\dots,z_n$.
-  \item We then define \important{refined polynomials} $\widehat E_\kappa$ and $\widehat F_\kappa$, with
+  \item We construct polynomials $\widehat E_\kappa$ and $\widehat F_\kappa$ in the refined representation that satisfy
   \[
-  \widehat F_\kappa=\sum_{(\nu,\mu)}a_\kappa^\mu(\nu)\,\mathsf Z^\nu F_\mu.
+  \widehat F_\kappa=\sum_{(\nu,\mu)}a_\kappa^\mu(\nu)\,\important{\mathsf Z^\nu} F_\mu
+  \quad\xrightarrow{\ \important{\mathsf Z_i}\mapsto z_i\ }\quad
+  F_\kappa=\sum_{(\nu,\mu)}a_\kappa^\mu(\nu)\,z^\nu F_\mu.
   \]
-  \item Replacing $\mathsf Z_i$ by $z_i$ sends $\widehat E_\kappa\mapsto E_\kappa$ and $\widehat F_\kappa\mapsto F_\kappa$, which gives Theorem~A.
 \end{itemize}
 \end{frame}
 
@@ -912,30 +975,57 @@ Together with the two-row recurrence (Theorem A), this gives:
 \begin{thmC}[BD--Williams '26]
 For $\mu\in\ZZ_{\ge0}^n$,
 \[
+\Top(F_\mu)=F^{\important{A}}_\mu,\qquad
+\Top\big(E_\mu(z_1,\dots,z_n;q,t)\big)=E^{\important{A}}_{\mu^{\mathrm{rev}}}(z_n,\dots,z_1;q^{-1},t^{-1}).
+\]
+\end{thmC}
+\end{frame}
+
+\begin{frame}{Main results}
+For $k\in\ZZ$, let $\Sign(k)\in\{-1,0,1\}$ be the sign of $k$. For $\kappa\in\ZZ^n$, let $\kappa^-$ be obtained from $\kappa$ by decreasing the absolute value of each nonzero part by $1$.
+\begin{thmA}[two-row recurrence]
+For $\kappa\in\ZZ^n$,
+\[
+F_\kappa=\sum_{(\nu,\mu)}a_\kappa^\mu(\nu)\,z^\nu F_\mu,
+\]
+where $\mu\in W_0\cdot\kappa^-$ and $\nu\in\ZZ^n$ with $\nu_i\in\{0,\Sign(\kappa_i)\}$.
+\end{thmA}
+\begin{thmB}[local rules]
+The coefficients $a_\kappa^\mu(\nu)$ are uniquely characterized by a family of local rules.
+\end{thmB}
+\begin{thmC}[top homogeneous part]
+For $\mu\in\ZZ_{\ge0}^n$,
+\[
 \Top(F_\mu)=F^A_\mu,\qquad
 \Top\big(E_\mu(z_1,\dots,z_n;q,t)\big)=E^A_{\mu^{\mathrm{rev}}}(z_n,\dots,z_1;q^{-1},t^{-1}).
 \]
 \end{thmC}
 \end{frame}
 
-\begin{frame}{Main results (BD--Williams)}
-\begin{thmA}[BD--Williams '26]
-For $\kappa\in\ZZ^n$, set $(\kappa^-)_i=\kappa_i-\Sign(\kappa_i)$. Then
-\[
-F_\kappa=\sum_{(\nu,\mu)}a_\kappa^\mu(\nu)\,z^\nu F_\mu,
-\]
-where $\mu\in W_0\cdot\kappa^-$ and $\nu\in\ZZ^n$ with $\nu_i\in\{0,\Sign(\kappa_i)\}$.
-\end{thmA}
-\begin{thmB}[BD--Williams '26]
-The coefficients $a_\kappa^\mu(\nu)$ are uniquely characterized by a family of local rules.
-\end{thmB}
-\begin{thmC}[BD--Williams '26]
-For $\mu\in\ZZ_{\ge0}^n$,
-\[
-\Top(F_\mu)=F^{\important{A}}_\mu,\qquad
-\Top\big(E_\mu(z_1,\dots,z_n;q,t)\big)=E^{\important{A}}_{\mu^{\mathrm{rev}}}(z_n,\dots,z_1;q^{-1},t^{-1}).
-\]
-\end{thmC}
+\begin{frame}{Summary}
+\centering
+\begin{tikzpicture}[
+  fam/.style={draw=uiblink2,rounded corners,line width=0.6pt,fill=uiblink2!5,align=center,inner sep=4pt,font=\small,minimum height=1.1cm},
+  arr/.style={-latex,line width=0.8pt,uiblink2},
+  lab/.style={font=\footnotesize,text=black!60}]
+  % line 1
+  \node[fam] (Acomb) at (0,0) {Type $A$\\ combinatorics};
+  \node[fam] (Arec) at (7,0) {Type $A$\\ two-row recurrence};
+  \draw[arr] (Acomb) to[bend left=12] (Arec);
+  % line 2
+  \uncover<2->{
+  \node[fam] (DAHA) at (7,-3) {DAHA};
+  \node[fam] (Krec) at (3.5,-3) {Two-row\\ recurrence};
+  \node[fam] (LR) at (0,-3) {Local rules};
+  \draw[arr] (DAHA) -- node[lab,below] {Theorem A} (Krec);
+  \draw[arr] (Krec) -- node[lab,above] {$q$KZ} node[lab,below] {Theorem B} (LR);
+  \draw[arr,dashed] (LR) -- node[lab,left] {Theorem C} (Acomb);
+  }
+  % line 3
+  \uncover<3->{
+  \draw[arr,uibred] (Arec) to[bend left=12] (Acomb);
+  }
+\end{tikzpicture}
 \end{frame}
 
 \appendix
