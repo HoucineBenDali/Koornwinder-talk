@@ -463,13 +463,13 @@ The stationary probability of a state $\mu$ of the multispecies ASEP with open b
 \bigskip
 Here $a,b,c,d$ are related to the boundary rates by
 \begin{align*}
-\alpha&=\frac{-ac(1-t)}{(1+a)(1+c)}, & \gamma&=\frac{1-t}{(1+a)(1+c)},\\
-\beta&=\frac{-bd(1-t)}{(1+b)(1+d)}, & \delta&=\frac{1-t}{(1+b)(1+d)}.
+\alpha&=\frac{-ac(1-t)}{(1-a)(1-c)}, & \gamma&=\frac{1-t}{(1-a)(1-c)},\\
+\beta&=\frac{-bd(1-t)}{(1-b)(1-d)}, & \delta&=\frac{1-t}{(1-b)(1-d)}.
 \end{align*}
 \end{frame}
 
 \begin{frame}{Some examples of Koornwinder ASEP polynomials for $n=3$}
-The top degree part is represented in \important{red}; we will see that it corresponds to type A ASEP polynomials.
+The top degree part is represented in \important{red}; we will see that it corresponds to type $A$ ASEP polynomials.
 
 \scriptsize\setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}
 \begin{align*}
@@ -857,9 +857,9 @@ Each local rule ``transports'' a column to the next position, plus \important{re
 \only<1-2>{%
 \begin{gather*}
 \conf{m & \ell\\ -k & 0}
-=\underbrace{t\conf{\ell & m\\ 0 & -k}}_{\text{\small transported term}}+\underbrace{(1-t)\conf{m & \ell\\ 0 & -k}}_{\text{\small residual terms}},\\
+={\underbrace{t\conf{\ell & m\\ 0 & -k}}_{\text{\small transported term}}}+{\underbrace{(1-t)\conf{m & \ell\\ 0 & -k}}_{\text{\small residual terms}}},\\
 \conf{0 & \cdots\\ \hb{k} & \cdots}
-=\underbrace{-q^{k-1}ac\conf{0 & \cdots\\ \hb{-k} & \cdots}}_{\text{\small transported term}}\underbrace{-q^{k-1}(a+c)\conf{0 & \cdots\\ -k & \cdots}}_{\text{\small residual terms}}.
+={\underbrace{-q^{k-1}ac\conf{0 & \cdots\\ \hb{-k} & \cdots}}_{\text{\small transported term}}}-{\underbrace{q^{k-1}(a+c)\conf{0 & \cdots\\ -k & \cdots}}_{\text{\small residual terms}}}.
 \end{gather*}
 \uncover<2>{\textbf{Fact:} There exists a partial order on two-line configurations for which the residual terms are smaller.}}
 \only<3->{%
