@@ -33,8 +33,10 @@
 
 % Notation of the paper
 \newcommand{\ZZ}{\mathbb Z}
+\newcommand{\NN}{\mathbb N}
 \newcommand{\QQ}{\mathbb Q}
 \newcommand{\KK}{\mathbb K}
+\newcommand{\CC}{\boldsymbol{\mathcal{C}}}
 \newcommand{\Sign}{\mathrm{Sign}}
 \newcommand{\hb}[1]{\overline{#1}}
 \DeclareMathOperator{\wt}{wt}
@@ -144,6 +146,11 @@
   \foreach \c/\l in {1/3,2/-1,5/-2,6/-3} \node[mlqball] at (\c,1) {$\l$};
 \end{tikzpicture}}
 \newif\ifmlqlabels
+\newif\ifmlqwts
+% invisible but space-preserving TikZ overlays
+\tikzset{invisible/.style={opacity=0},
+  visible on/.style={alt={#1{}{invisible}}},
+  alt/.code args={<#1>#2#3}{\alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}}}
 \newcommand{\MLQfour}{%
 \begin{tikzpicture}
   \mlqgrid{1}{4}
@@ -153,6 +160,7 @@
   \node[mlqball] at (3,4) {4};
   \node[mlqball] at (3,3) {4};
   \ifmlqlabels\foreach \c in {1,...,8} \node[font=\mlqlabelfont] at (\c,4.65) {$z_{\c}$};\fi
+  \ifmlqwts\foreach \r in {1,2,3} \node[visible on=<2->,anchor=west,font=\large] at (9.1,\r+0.5) {$\mathrm{wt}_{\r}$};\fi
 \end{tikzpicture}}
 \newcommand{\mlqdy}{0}
 \newcommand{\mlqlabelfont}{\normalsize}
@@ -183,13 +191,13 @@
 \end{frame}
 
 \begin{frame}[t]{Koornwinder polynomials: overview}
-Koornwinder polynomials are Laurent polynomials in $n$ variables, depending on six parameters $q,t,a,b,c,d$.
+Koornwinder polynomials are Laurent polynomials in $n$ variables $z_1,\dots,z_n$, depending on six parameters $q,t,a,b,c,d$.
 \begin{columns}[T]
 \column{0.64\textwidth}
 \begin{itemize}
   \item Koornwinder '92: \notion{symmetric} polynomials, indexed by partitions, introduced as multivariable orthogonal polynomials.
   \item Cherednik '95: introduced double affine Hecke algebras of reduced types.
-  \item Sahi '99, '00: double affine Hecke algebra of type $(C^\vee,C)$, used to prove Macdonald's duality conjecture for Koornwinder polynomials and to define the \notion{nonsymmetric} Koornwinder polynomials.
+  \item Sahi '99, '00: introduced the double affine Hecke algebra of type $(C^\vee,C)$ and used it to define the \notion{nonsymmetric} Koornwinder polynomials.
   \item Stokman '00: orthogonality of nonsymmetric Koornwinder polynomials.
 \end{itemize}
 \column{0.33\textwidth}
@@ -213,13 +221,13 @@ $\Longrightarrow$ They generalize several families from symmetric function theor
   \node[fam] (K) at (0,0) {Koornwinder polynomials\\[1pt] {\scriptsize parameters: $q,t,a,b,c,d$}};
   \node[fam] (AW) at (-3.85,-2.3) {Askey--Wilson\\ polynomials\\[1pt] {\scriptsize parameters: $q,a,b,c,d$}};
   \node[fam] (A) at (0,-2.3) {Macdonald polynomials\\ of type $A$\\[1pt] {\scriptsize parameters: $q,t$}};
-  \node[fam] (BC) at (3.85,-2.3) {Macdonald polynomials\\ of types $B$, $C$, $D$, \dots\\[1pt] {\scriptsize parameters: $q,t$,}\\[-1pt] {\scriptsize and some of $a,b,c,d$}};
+  \node[fam] (BC) at (3.85,-2.3) {Macdonald polynomials\\ of types $B$, $C$, $D$, $BC$\\[1pt] {\scriptsize parameters: $q,t$,}\\[-1pt] {\scriptsize and some of $a,b,c,d$}};
   \node[fam] (J) at (-1.2,-3.95) {Jack\\[1pt] {\scriptsize parameter: $\alpha$}};
   \node[fam] (HL) at (1.2,-3.95) {Hall--Littlewood\\[1pt] {\scriptsize parameter: $t$}};
   \node[fam] (S) at (0,-5.4) {Schur, key polynomials, Demazure atoms};
   \draw[arr] (K.west) -- node[lab,sloped,above] {one variable} (AW.north);
   \draw[arr] (K) -- node[lab,right=2pt] {top homogeneous\\ part {\large$\rstar$}} (A);
-  \draw[arr] (K.east) -- node[lab,sloped,above] {specialization} (BC.north);
+  \draw[arr] (K.east) -- node[lab,sloped,above] {specialization {\large$\blacklozenge$}} (BC.north);
   \draw[arr] (A) -- node[lab,midway,left=3pt] {$q=t^\alpha$, $t\to1$} (J);
   \draw[arr] (A) -- node[lab,right=3pt] {$q=0$} (HL);
   \draw[arr] (J) -- node[lab,left=3pt] {$\alpha=1$} (S);
@@ -227,19 +235,20 @@ $\Longrightarrow$ They generalize several families from symmetric function theor
 \end{tikzpicture}
 
 \vfill
-{\raggedright\scriptsize {\large$\rstar$} Symmetric case: van Diejen '95. Nonsymmetric case: BD--Williams.\par}
+{\raggedright\footnotesize {\large$\blacklozenge$} Koornwinder '92, Macdonald '03; detailed treatment: Yamaguchi--Yanagida '23.\\[0.4em] {\large$\rstar$} Symmetric case: van Diejen '95. Nonsymmetric case: BD--Williams '26.\par}
 \end{frame}
 
 \begin{frame}{Motivations and previous results}
 \begin{itemize}\setlength{\itemsep}{1.2em}
-  \item \textbf{Combinatorics.} Alcove walks (Ram--Yip '11, Colmenarejo--Gagnon--Ram '26); the case $\lambda=(1,\dots,1,0,\dots,0)$ (Corteel--Mandelshtam--Williams '24).\\
-  $\blacktriangleright$ \important{Problem:} a combinatorial formula generalizing type $A$ (Haglund--Haiman--Loehr '05, Corteel--Mandelshtam--Williams '22).
+  \item \textbf{Combinatorics.} Type $A$ Macdonald polynomials have several combinatorial formulas: fillings (Haglund--Haiman--Loehr '05) and multiline queues (Corteel--Mandelshtam--Williams '22).\\
+  $\blacktriangleright$ Generalize these formulas to Koornwinder polynomials?\\
   \pause
-  \item \textbf{Integrability.} Vertex models for Schur (Brubaker--Bump--Friedberg '11), Hall--Littlewood (Tsilevich '06) and nonsymmetric Macdonald polynomials (Borodin--Wheeler '22); only special cases for Koornwinder (Wheeler--Zinn-Justin '16, Finn--Vanicat '17).\\
-  $\blacktriangleright$ \important{Problem:} a vertex model for Koornwinder polynomials.
+  Alcove walk formulas (Ram--Yip '11, Colmenarejo--Gagnon--Ram '26); the case $\lambda=(1,\dots,1,0,\dots,0)$: rhombic staircase tableaux (Corteel--Mandelshtam--Williams '24).
   \pause
-  \item \textbf{Particle models.} At $q=1$ and $z_i=1$: the multispecies open ASEP (Cantini--Garbali--de Gier--Wheeler '16).\\
-  $\blacktriangleright$ \important{Problem:} a particle model without specializing the variables, in the same vein as the $t$-PushTASEP (Ayyer--Martin--Williams '24) and the interpolation $t$-PushTASEP (BD--Williams '26) in type $A$.
+  \item \textbf{Integrability.} Vertex models for nonsymmetric Macdonald polynomials (Borodin--Wheeler '22); only special cases for Koornwinder (Wheeler--Zinn-Justin '16).\\
+  $\blacktriangleright$ A vertex model for Koornwinder polynomials?
+  \pause
+  \item \textbf{Interacting particle systems.} At $q=1$ and $z_i=1$: connection to the multispecies open ASEP (Cantini--Garbali--de Gier--Wheeler '16).
 \end{itemize}
 \end{frame}
 
@@ -274,9 +283,9 @@ $\Longrightarrow$ They generalize several families from symmetric function theor
 % \end{itemize}
 % \end{frame}
 
-\begin{frame}{Main results (BD--Williams)}
+\begin{frame}{Main results (BD--Williams '26)}
 \begin{thmA}[two-row recurrence]
-Nonsymmetric Koornwinder polynomials satisfy a two-row recurrence: each one is an explicit combination of polynomials obtained by removing one row.
+Koornwinder polynomials satisfy a recurrence relation.
 \end{thmA}
 \begin{thmB}[local rules]
 The coefficients of this recurrence are characterized by a finite family of local rules.
@@ -287,14 +296,17 @@ The top homogeneous parts of nonsymmetric Koornwinder polynomials are nonsymmetr
 \end{frame}
 
 \begin{frame}[t]{Notation}
+Fix $n>0$.
 \begin{itemize}
-  \item A \notion{partition} is $\lambda=(\lambda_1\ge\lambda_2\ge\dots\ge\lambda_n\ge0)$, and a \notion{composition} is $\kappa=(\kappa_1,\dots,\kappa_n)\in\ZZ^n$.
+  \item A \notion{partition} is $\lambda=(\lambda_1\ge\lambda_2\ge\dots\ge\lambda_n\ge0)$, and a \notion{signed composition} is $\kappa=(\kappa_1,\dots,\kappa_n)\in\ZZ^n$.
   \pause
-  \item The finite Weyl group $W_0\simeq S_n\ltimes(\ZZ/2\ZZ)^n$ is the group of \notion{signed permutations}. It acts on $\ZZ^n$ by permuting the entries and changing their signs.
+  \item The finite Weyl group $W_0\simeq S_n\ltimes(\ZZ/2\ZZ)^n$ of type $C_n$ is the group of \notion{signed permutations}. It acts on $\ZZ^n$ by permuting the entries and changing their signs.
   \only<2>{%
-  \begin{tikzpicture}[overlay,shift={(1.6,-0.75)},x=1.1cm,
+  \begin{tikzpicture}[remember picture,overlay,
     dot/.style={circle,inner sep=0pt,draw=blue,fill=white,line width=0.9pt,minimum size=6pt},
     edge/.style={line width=0.5pt}]
+    \coordinate (wzero) at (0,0);
+    \begin{scope}[shift={($(current page.center|-wzero)+(-3.85cm,-0.75cm)$)},x=1.1cm]
     \draw[edge] (1,0)--(2.45,0);
     \draw[edge,dotted] (2.6,0)--(3.4,0);
     \draw[edge] (3.55,0)--(5,0);
@@ -302,31 +314,29 @@ The top homogeneous parts of nonsymmetric Koornwinder polynomials are nonsymmetr
     \draw[edge] (5.577,0.11)--(5.423,0)--(5.577,-0.11);
     \foreach \x/\l in {1/1,2/2,4/n-2,5/n-1,6/n}
       \node[dot,label={[label distance=1pt]below:{\small$\strut\l$}}] at (\x,0) {};
+    \end{scope}
   \end{tikzpicture}}
   \pause
-  \item $W_0\cdot\lambda$ is the set of compositions obtained by permuting the parts of $\lambda$ and changing their signs. For example,
+  \item $W_0\cdot\lambda$ is the set of signed compositions obtained by permuting the parts of $\lambda$ and changing their signs. For example,
   \[
   W_0\cdot(2,0)=\{(2,0),(-2,0),(0,2),(0,-2)\}.
   \]
   \vspace{-1.2em}
   \pause
-  \item We work with Laurent polynomials in $\KK[z_1^{\pm1},\dots,z_n^{\pm1}]$, where $\KK=\QQ(q,t,a,b,c,d)$. The group $W_0$ acts by permuting the variables and inverting them, $z_i\mapsto z_i^{-1}$.
+  \item We work with Laurent polynomials in $\QQ(q,t,a,b,c,d)[z_1^{\pm1},\dots,z_n^{\pm1}]$. The group $W_0$ acts by permuting the variables and inverting them, $z_i\mapsto z_i^{-1}$.
   \pause
   \item A Laurent polynomial is \notion{symmetric} if it is invariant under $W_0$.
 \end{itemize}
 \only<6>{%
-\begin{exampleblock}{Example: monomial symmetric Laurent polynomials}
-\[
-m_\lambda=\sum_{\kappa\in W_0\cdot\lambda}z^\kappa,\qquad\text{e.g.}\quad m_{(2,0)}=z_1^2+z_1^{-2}+z_2^2+z_2^{-2}.
-\]
+\begin{exampleblock}{Example}
+$z_1^2+z_1^{-2}+z_2^2+z_2^{-2}-bd\,\bigl(z_1z_2+z_1z_2^{-1}+z_1^{-1}z_2+z_1^{-1}z_2^{-1}\bigr)$ is symmetric.
 \end{exampleblock}}
 \only<7>{%
 \medskip
 \textbf{Indexing:}
 \begin{itemize}
-  \item[$\triangleright$] symmetric polynomials: partitions $\lambda$,
-  \item[$\triangleright$] nonsymmetric Laurent polynomials: compositions $\kappa\in\ZZ^n$,
-  \item[$\triangleright$] nonsymmetric type $A$ polynomials (which are homogeneous): $\mu\in\ZZ_{\ge0}^n$.
+  \item[$\triangleright$] symmetric polynomials: partitions $\lambda=(\lambda_1,\dots,\lambda_n)$,
+  \item[$\triangleright$] nonsymmetric Laurent polynomials: signed compositions $\kappa\in\ZZ^n$.
 \end{itemize}}
 \end{frame}
 
@@ -337,15 +347,11 @@ m_\lambda=\sum_{\kappa\in W_0\cdot\lambda}z^\kappa,\qquad\text{e.g.}\quad m_{(2,
   arr/.style={-latex,line width=0.6pt,uiblink2},
   desc/.style={align=center,font=\footnotesize,text width=3.6cm}]
   \node[fam] (K) at (0,0) {Symmetric Koornwinder polynomials\\[1pt] $K_\lambda(z_1,\dots,z_n;q,t,a,b,c,d)$};
-  \only<2->{
   \node[fam] (E) at (-3.4,-1.9) {Nonsymmetric\\ Koornwinder\\ polynomials $E_\kappa$};
   \node[fam] (F) at (3.4,-1.9) {Koornwinder ASEP\\ polynomials $F_\kappa$};
   \draw[arr] (K) -- (E);
   \draw[arr] (K) -- (F);
-  \draw[arr,latex-latex,dashed] (E) -- node[above,font=\scriptsize,text=black!60] {Kasatani '11} (F);
-  \node[desc,below=6pt of E] {defined as eigenfunctions of the Cherednik operators};
-  \node[desc,below=6pt of F] {defined by the $q$KZ relations};
-  }
+  \draw[arr,latex-latex,dashed] (E) -- node[above,font=\scriptsize,text=black!60] {triangular change of basis} (F);
 \end{tikzpicture}
 
 \raggedright
@@ -374,7 +380,7 @@ $K_{(2,0)}=F_{(2,0)}+F_{(-2,0)}+F_{(0,2)}+F_{(0,-2)}$.
 
 
 \begin{frame}{Definitions of $E_\kappa$ and $F_\kappa$}
-The affine Hecke algebra $\mathcal H$ of type $\widetilde C_n$ is generated by $T_0,\dots,T_n$, with braid relations given by the diagram and $(T_i-t_i)(T_i+1)=0$.
+The affine Hecke algebra of type $\widetilde C_n$ is generated by $T_0,\dots,T_n$, with braid relations given by the diagram and $(T_i-t_i)(T_i+1)=0$.
 \begin{center}
 \vspace{-0.6em}
 \begin{tikzpicture}[x=1.1cm,
@@ -393,6 +399,10 @@ The affine Hecke algebra $\mathcal H$ of type $\widetilde C_n$ is generated by $
 \vspace{-0.6em}
 \end{center}
 \pause
+It acts on Laurent polynomials via \important{the polynomial representation}.
+\pause
+\medskip
+\setlength{\abovedisplayskip}{3pt}\setlength{\belowdisplayskip}{3pt}%
 \begin{columns}[T,onlytextwidth]
 \column{0.415\textwidth}
 \small
@@ -420,17 +430,13 @@ T_n F_{\dots,\kappa_n}&=t_n\,F_{\dots,\kappa_n}, && \kappa_n=0,\\
 T_n F_{\dots,\kappa_n}&=F_{\dots,\important{-\kappa_n}}, && \kappa_n>0.
 \end{alignat*}
 \end{columns}
-\pause
-\begin{theorem}[Kasatani '11]
-For the antidominant element $\kappa=(-\lambda_1,\dots,-\lambda_n)$, we have $E_\kappa=F_\kappa$.
-\end{theorem}
 \end{frame}
 
 \begin{frame}{Koornwinder polynomials and the multispecies ASEP}
 \begin{columns}[c]
 \column{0.6\textwidth}
 \begin{theorem}[Cantini--Garbali--de Gier--Wheeler '16]
-For $a,b,c,d$ related to the boundary rates $\alpha,\beta,\gamma,\delta$ by an explicit change of variables, the stationary probability of a state $\mu$ of the multispecies ASEP with open boundaries on $n$ sites is proportional to $F_\mu(\important{z_1=\dots=z_n=1};\,\important{q=1},t,a,b,c,d)$.
+The stationary probability of a state $\mu$ of the multispecies ASEP with open boundaries on $n$ sites is proportional to $F_\mu(\important{z_1=\dots=z_n=1};\,\important{q=1},t,a,b,c,d)$.
 \end{theorem}
 \column{0.38\textwidth}
 \centering
@@ -455,7 +461,7 @@ For $a,b,c,d$ related to the boundary rates $\alpha,\beta,\gamma,\delta$ by an e
 {\scriptsize Dynamics of the multispecies ASEP with open boundaries}
 \end{columns}
 \bigskip
-The change of variables is
+Here $a,b,c,d$ are related to the boundary rates by
 \begin{align*}
 \alpha&=\frac{-ac(1-t)}{(1+a)(1+c)}, & \gamma&=\frac{1-t}{(1+a)(1+c)},\\
 \beta&=\frac{-bd(1-t)}{(1+b)(1+d)}, & \delta&=\frac{1-t}{(1+b)(1+d)}.
@@ -463,25 +469,15 @@ The change of variables is
 \end{frame}
 
 \begin{frame}{Some examples of Koornwinder ASEP polynomials for $n=3$}
-\scriptsize
+The top degree part is represented in \important{red}; we will see that it corresponds to type A ASEP polynomials.
+
+\scriptsize\setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}
 \begin{align*}
 &F_{(0,1,0)} = \important{z_2}+\frac{t\bigl(t^2ac(b+d)-a-c\bigr)}{1-t^4abcd}
 \end{align*}
-\pause
-\vspace{-0.8em}
-\begin{align*}
-&F_{(0,1,-1)} = z_2z_3^{-1}+\frac{tbd(a+c)-b-d}{1-t^2abcd}\,z_2+\frac{t\bigl(tac(b+d)-a-c\bigr)}{1-t^2abcd}\,z_3^{-1}\\
-&\qquad+\frac{t}{(1-t^2abcd)(1-t^3abcd)}\Bigl((a+c)(b+d)-t\bigl(ac(b+d)^2+bd(a+c)^2-abcd\bigr)\\
-&\qquad\qquad+t^2abcd\bigl((a+c)(b+d)-1\bigr)-t^3(1-t)(abcd)^2\Bigr)
-\end{align*}
-
-\vfill
-{\normalsize In the cases of nonnegative compositions, the top degree part is represented in \important{red}. We will see that it corresponds to type A ASEP polynomials.\par}
-\end{frame}
-
-\begin{frame}{Some examples of Koornwinder ASEP polynomials for $n=3$}
-\scriptsize\setlength{\jot}{1pt}
-\begin{align*}
+\vspace{-0.6em}
+{\centering\setlength{\jot}{1pt}%
+\adjustbox{max width=\textwidth,max totalheight=0.62\textheight}{$\begin{aligned}
 &F_{(0,2,0)} = \important{z_2^2+\frac{1-t}{1-qt}\bigl(z_1+qz_3\bigr)z_2}+\frac{q(1-t)}{1-qt}\bigl(z_1^{-1}+z_3^{-1}\bigr)z_2+\frac{qt\bigl(qt^2ac(b+d)-a-c\bigr)}{1-q^2t^4abcd}z_2^{-1}\\
 &\qquad+\frac{qt(1-t)\bigl(qt^2ac(b+d)-a-c\bigr)}{(1-qt)(1-q^2t^4abcd)}\,\bigl(z_1+q\,z_1^{-1}+z_3+z_3^{-1}\bigr)\\
 &\qquad-\frac{1}{(1-qt)(1-q^2t^4abcd)}\Bigl(q^3t^5\bigl(ac(b+d)+bd(a+c)\bigr)+q^2t^4ac(b+d)-q^2t^3ac(b+d)\\
@@ -496,9 +492,8 @@ The change of variables is
 &\qquad\qquad-tac(b+d)^2+t^2ac+tabcd-1\bigr)\\
 &\qquad\quad+q\bigl(t^3ac(a+c)(b+d)+t^4ac+t^3abcd-t(a+c)^2-t(a+c)(b+d)\\
 &\qquad\qquad-t^2+tac+t-1\bigr)-tac\Bigr)
-\end{align*}
+\end{aligned}$}\par}
 \end{frame}
-
 \begin{frame}{Some examples of Koornwinder ASEP polynomials for $n=3$}
 $F_{(0,2,1)}=$\par\smallskip
 \centering
@@ -508,6 +503,7 @@ $\input{F021_terms}$}}
 \end{frame}
 
 \begin{frame}{Branching rules for symmetric polynomials}
+Symmetric Schur polynomials:
 \[
 s_\lambda(z_1,\dots,z_n)=\sum_{\substack{\mu\subseteq\lambda\\ \lambda/\mu\text{ horizontal strip}}} z_n^{|\lambda|-|\mu|}\,s_\mu(z_1,\dots,z_{n-1}).
 \]
@@ -539,6 +535,7 @@ $\lambda/\mu$ is a horizontal strip: at most one box in each column.
 \end{frame}
 
 \begin{frame}{Branching rules for symmetric polynomials}
+Symmetric Macdonald polynomials:
 \[
 P_\lambda(z_1,\dots,z_n;q,t)=\sum_{\substack{\mu\subseteq\lambda\\ \lambda/\mu\text{ horizontal strip}}}\important{\psi_{\lambda/\mu}(q,t)}\,z_n^{|\lambda|-|\mu|}P_\mu(z_1,\dots,z_{n-1};q,t),
 \]
@@ -554,7 +551,7 @@ where $R_{\lambda/\mu}$ (resp.\ $C_{\lambda/\mu}$) is the union of rows (resp.\ 
 \medskip
 Branching rules also exist for
 \begin{itemize}
-  \item interpolation Macdonald polynomials (Okounkov '98),
+  \item symmetric interpolation Macdonald polynomials (Okounkov '98),
   \item symmetric Koornwinder polynomials (van Diejen--Emsiz '15).
 \end{itemize}
 
@@ -567,45 +564,32 @@ These branching rules have two limitations:
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Type A: multiline queues}
-\begin{center}
-\mlqlabelstrue\resizebox{0.62\textwidth}{!}{\MLQfour}
-
-{\small A multiline queue (MLQ) with $4$ rows, of type $(2,2,0,0,0,4,2,1)$.}
-\end{center}
+\begin{frame}{Type A two-row recurrence}
+We denote by $F^{\important{A}}_\kappa(z_1,\dots,z_n;q,t)$ the type $A$ ASEP polynomials.
 \begin{itemize}
-  \item The type of an MLQ is given by the labels of its bottom row ($0$ for an empty position).
-  \item Ball weight: each ball in column $i$ contributes $z_i$; here $z_1z_2^2z_3^2z_4z_5z_6^2z_7z_8$.
-  \item Pairing weight: a rational function in $q,t$, multiplicative over the layers: here $\mathrm{wt}_{\mathrm{pairing}}=\mathrm{wt}_1\,\mathrm{wt}_2\,\mathrm{wt}_3$.
+  \item They are \important{homogeneous} polynomials.
+  \item They are indexed by \important{compositions} $\kappa\in\NN^n$.
 \end{itemize}
+\pause
+{\small
+\begin{align*}
+F^A_{(0,1,0)}&=z_2,\\
+F^A_{(0,2,0)}&=z_2^2+\frac{1-t}{1-qt}\bigl(z_1+qz_3\bigr)z_2,\\
+F^A_{(0,2,1)}&=z_2^2z_3+\frac{1-t}{1-qt^2}\,z_1z_2z_3.
+\end{align*}}
+\pause
 \begin{theorem}[Corteel--Mandelshtam--Williams '22]
-For $\kappa\in\ZZ_{\ge0}^n$, $F^A_\kappa$ is the generating function of MLQs of type $\kappa$.
+For $\kappa\in\NN^n$,
+\[
+F^A_\kappa(z_1,\dots,z_n;q,t)=\prod_{i:\,\kappa_i>0}z_i\sum_{\substack{\mu\text{ permutation}\\ \text{of }\kappa^-}}c^\mu_\kappa(q,t)\,F^A_\mu(z_1,\dots,z_n;q,t),
+\]
+for some coefficients $c^\mu_\kappa(q,t)$, where $\kappa^-$ is obtained from $\kappa$ by decreasing each nonzero part by $1$. Moreover, the coefficients $c^\mu_\kappa(q,t)$ are combinatorial.
 \end{theorem}
 \end{frame}
 
 \begin{frame}{Type A two-row recurrence}
-\begin{center}
-\hspace*{-0.5cm}\adjustbox{width=0.4\textwidth,valign=c}{\MLQfour}
-$\equiv$
-\adjustbox{width=0.55\textwidth,valign=c}{\MLQfourDecomposed}
-\end{center}
-Since the pairing weight is multiplicative over layers, removing the bottom layer gives
 \[
-F^A_\kappa(z_1,\dots,z_n;q,t)=\prod_{i:\,\kappa_i>0}z_i\sum_{\mu\in S_n\cdot\kappa^-}c^\mu_\kappa(q,t)\,F^A_\mu(z_1,\dots,z_n;q,t),
-\]
-where $\kappa^-_i=\max\{\kappa_i-1,0\}$, and $c^\mu_\kappa(q,t)$ is the generating function of generalized two-line queues.
-\end{frame}
-
-\begin{frame}{Type A two-row recurrence}
-\begin{center}
-\mlqlabelstrue\renewcommand{\mlqdy}{0.5}\renewcommand{\mlqlabelfont}{\Large}%
-\adjustbox{max height=0.28\textheight,max width=0.38\textwidth,valign=c}{\MLQfour}
-$\equiv$
-\adjustbox{max height=0.34\textheight,max width=0.52\textwidth,valign=c}{\MLQfourDecomposed}
-\end{center}
-\vspace{0.4em}
-\[
-F^A_\kappa(z_1,\dots,z_n;q,t)=\prod_{i:\,\kappa_i>0}z_i\sum_{\mu\in S_n\cdot\kappa^-}c^\mu_\kappa(q,t)\,F^A_\mu(z_1,\dots,z_n;q,t)
+F^A_\kappa(z_1,\dots,z_n;q,t)=\prod_{i:\,\kappa_i>0}z_i\sum_{\substack{\mu\text{ permutation}\\ \text{of }\kappa^-}}c^\mu_\kappa(q,t)\,F^A_\mu(z_1,\dots,z_n;q,t)
 \]
 \begin{center}
 \adjustbox{max width=\textwidth}{%
@@ -620,6 +604,7 @@ F^A_\kappa(z_1,\dots,z_n;q,t)=\prod_{i:\,\kappa_i>0}z_i\sum_{\mu\in S_n\cdot\kap
   \foreach \c in {1,2,6,7,8}
     \node<2->[font=\footnotesize] at (\c-0.5,0.5) {$z_{\c}$};
   \node[anchor=north] at (4,-0.3) {$\kappa=(2,2,0,0,0,4,2,1)$};
+  \node<2->[anchor=north] at (4,-1.6) {$\prod_{i:\,\kappa_i>0}z_i=z_1z_2z_6z_7z_8$};
   % kappa^-
   \begin{scope}[shift={(12.5,0)}]
   \uncover<3->{
@@ -639,21 +624,55 @@ F^A_\kappa(z_1,\dots,z_n;q,t)=\prod_{i:\,\kappa_i>0}z_i\sum_{\mu\in S_n\cdot\kap
   \foreach \c/\h in {2/1,4/1,5/3,6/1}
     \foreach \r in {1,...,\h}
       \draw[fill=black!12] (\c-1,\r-1) rectangle (\c,\r);
-  \node at (9.2,0.8) {$\cdots$};
+  \node[font=\footnotesize] at (4,3.6) {Example:};
   \node[anchor=north] at (4,-0.3) {$\mu=(0,1,0,1,3,1,0,0)$};}
   \end{scope}
 \end{tikzpicture}}
 \end{center}
-\uncover<4->{%
-\begin{itemize}
-  \item One may think of this as a \emph{transposed} branching rule: instead of removing one column, we remove one row.
-\end{itemize}}
 \end{frame}
 
-\begin{frame}{Interpolation Macdonald polynomials}
+\begin{frame}{Type A two-row recurrence}
+\begin{center}
+\mlqlabelstrue\mlqwtstrue\resizebox{0.59\textwidth}{!}{\MLQfour}
+
+{\small A multiline queue (MLQ) with $4$ rows\alt<3->{, of type $(2,2,0,0,0,4,2,1)$.}{.}}
+\end{center}
+\pause
+The weight of an MLQ is $\mathrm{wt}=\mathrm{wt}_{\mathrm{ball}}\,\mathrm{wt}_{\mathrm{pairing}}$, where:
 \begin{itemize}
-  \item A variant of the two-row recurrence technique was used to give a combinatorial formula for interpolation Macdonald polynomials (BD--Williams '25).
+  \item Ball weight: each ball in column $i$ contributes $z_i$; here $z_1z_2^2z_3^2z_4z_5z_6^2z_7z_8$.
+  \item Pairing weight: a rational function in $q,t$, multiplicative over the layers: here $\mathrm{wt}_{\mathrm{pairing}}=\mathrm{wt}_1\,\mathrm{wt}_2\,\mathrm{wt}_3$.
 \end{itemize}
+\pause
+The type of an MLQ is given by the composition of its bottom row ($0$ for an empty position).
+\pause
+\begin{theorem}[Corteel--Mandelshtam--Williams '22]
+For $\kappa\in\NN^n$, the type $A$ ASEP polynomial $F^A_\kappa$ is the generating function of MLQs of type $\kappa$.
+\end{theorem}
+\end{frame}
+
+\begin{frame}{Type A two-row recurrence}
+\[
+F^A_\kappa(z_1,\dots,z_n;q,t)=\prod_{i:\,\kappa_i>0}z_i\sum_{\substack{\mu\text{ permutation}\\ \text{of }\kappa^-}}c^\mu_\kappa(q,t)\,F^A_\mu(z_1,\dots,z_n;q,t)
+\]
+\textbf{Proof:}
+\begin{center}
+\mlqlabelstrue\renewcommand{\mlqdy}{0.5}\renewcommand{\mlqlabelfont}{\Large}%
+\begin{tabular}{@{}c@{\quad}c@{\quad}c@{}}
+\adjustbox{max height=0.23\textheight,max width=0.36\textwidth,valign=c}{\MLQfour}
+& $\equiv$ &
+\adjustbox{max height=0.30\textheight,max width=0.52\textwidth,valign=c}{\MLQfourDecomposed}\\[0.3em]
+{\small\hspace*{0.6cm}$\kappa=(2,2,0,0,0,4,2,1)$} & & {\small\hspace*{1.8cm}$\mu=(0,1,0,1,3,1,0,0)$}
+\end{tabular}
+\end{center}
+Since the pairing weight is multiplicative over layers, $c^\mu_\kappa(q,t)$ is the generating function of generalized two-line queues.
+
+\uncover<2->{\medskip
+\textbf{Remark:} One may think of this as a \emph{transposed} branching rule: instead of removing one column, we remove one row.}
+\end{frame}
+
+\begin{frame}{Type A two-row recurrence}
+\textbf{Remark:} A variant of the two-row recurrence technique was used to give a combinatorial formula for interpolation Macdonald polynomials \mbox{(BD--Williams '25)}.
 \[
 \includegraphics[width=0.47\textwidth,valign=c]{figures/GhostMLQ_colored.pdf}
 \;\equiv\;
@@ -662,54 +681,26 @@ F^A_\kappa(z_1,\dots,z_n;q,t)=\prod_{i:\,\kappa_i>0}z_i\sum_{\mu\in S_n\cdot\kap
 \end{frame}
 
 \begin{frame}{Two-row recurrence for Koornwinder polynomials}
-For $k\in\ZZ$, let $\Sign(k)\in\{-1,0,1\}$ be the sign of $k$.
-\pause
-
-For $\kappa\in\ZZ^n$, let $\kappa^-$ be obtained from $\kappa$ by decreasing the absolute value of each nonzero part by $1$, i.e.\ by removing the basement cells.
-\begin{center}
-\begin{tikzpicture}[scale=0.4]
-  % kappa
-  \draw[line width=0.8pt] (0,0) -- (6,0);
-  \foreach \c/\h in {1/2,4/3,6/1}
-    \foreach \r in {1,...,\h}
-      \draw[fill=black!12] (\c-1,\r-1) rectangle (\c,\r);
-  \foreach \c/\h in {2/1,5/2}
-    \foreach \r in {1,...,\h}
-      \draw[fill=black!12] (\c-1,-\r) rectangle (\c,-\r+1);
-  \foreach \c in {1,4,6}
-    \draw[fill=uibred!35] (\c-1,0) rectangle (\c,1);
-  \foreach \c in {2,5}
-    \draw[fill=uibred!35] (\c-1,-1) rectangle (\c,0);
-  \node[anchor=north,font=\small] at (3,-2.2) {$\kappa=(2,-1,0,3,-2,1)$};
-  % kappa^-
-  \draw[->,line width=0.8pt] (7.5,0.5) -- (10.5,0.5);
-  \begin{scope}[shift={(12,0)}]
-  \draw[line width=0.8pt] (0,0) -- (6,0);
-  \foreach \c/\h in {1/1,4/2}
-    \foreach \r in {1,...,\h}
-      \draw[fill=black!12] (\c-1,\r-1) rectangle (\c,\r);
-  \draw[fill=black!12] (4,-1) rectangle (5,0);
-  \node[anchor=north,font=\small] at (3,-2.2) {$\kappa^-=(1,0,0,2,-1,0)$};
-  \end{scope}
-\end{tikzpicture}
-\end{center}
-\pause
 \begin{thmA}[BD--Williams '26]
 For $\kappa\in\ZZ^n$,
 \[
-F_\kappa(z_1,\dots,z_n;q,t,a,b,c,d)=\sum_{(\nu,\mu)}a_\kappa^\mu(\nu)\,z^\nu F_\mu(z_1,\dots,z_n;q,t,a,b,c,d),
+F_\kappa=\quad\sum_{\mathclap{\substack{\nu\in\ZZ^n\\ \nu_i\in\{0,\Sign(\kappa_i)\}}}}\quad z^\nu\quad\sum_{\mu\in W_0\cdot\kappa^-}a_\kappa^\mu(\nu)\,F_\mu,
 \]
-where $\mu\in W_0\cdot\kappa^-$ and $\nu\in\ZZ^n$ with $\nu_i\in\{0,\Sign(\kappa_i)\}$.
+for some coefficients $a_\kappa^\mu(\nu)\in\QQ(q,t,a,b,c,d)$.
 \end{thmA}
+\begin{itemize}
+  \item $\Sign(k)\in\{-1,0,1\}$ is the sign of $k\in\ZZ$.
+  \item $\kappa^-$ is obtained from $\kappa$ by decreasing the absolute value of each nonzero part by $1$.
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Two-row recurrence for Koornwinder polynomials}
 \[
-F_\kappa(z_1,\dots,z_n;q,t,a,b,c,d)=\sum_{(\nu,\mu)}a_\kappa^\mu(\nu)\,z^\nu F_\mu(z_1,\dots,z_n;q,t,a,b,c,d)
+F_\kappa=\quad\sum_{\mathclap{\substack{\nu\in\ZZ^n\\ \nu_i\in\{0,\Sign(\kappa_i)\}}}}\quad z^\nu\quad\sum_{\mu\in W_0\cdot\kappa^-}a_\kappa^\mu(\nu)\,F_\mu
 \]
 \begin{center}
 \adjustbox{max width=\textwidth}{%
-\begin{tikzpicture}[scale=0.47]
+\begin{tikzpicture}[scale=0.45]
   % (1) kappa
   \draw[line width=0.8pt] (0,0) -- (6,0);
   \foreach \c/\h in {1/2,4/3,6/1}
@@ -737,6 +728,7 @@ F_\kappa(z_1,\dots,z_n;q,t,a,b,c,d)=\sum_{(\nu,\mu)}a_\kappa^\mu(\nu)\,z^\nu F_\
     \draw[fill=uibred!35] (\c-1,0) rectangle (\c,1);
   \foreach \c in {2,5}
     \draw[fill=uibred!35] (\c-1,-1) rectangle (\c,0);
+  \node[font=\footnotesize] at (3,3.7) {Example:};
   \node[anchor=north] at (3,-2.3) {$z^\nu=z_1z_2^{-1}z_5^{-1}$};
   \foreach \c in {4,6}{
     \draw[fill=yellow!35] (\c-1,0) rectangle (\c,1);
@@ -752,7 +744,7 @@ F_\kappa(z_1,\dots,z_n;q,t,a,b,c,d)=\sum_{(\nu,\mu)}a_\kappa^\mu(\nu)\,z^\nu F_\
   \draw<3->[->,line width=0.8pt] (6.4,0.5) -- (7.6,0.5);
   \end{scope}
   % (3) kappa^- = (1,0,0,2,-1,0)
-  \begin{scope}[shift={(0,-6.3)}]
+  \begin{scope}[shift={(0,-6.0)}]
   \uncover<3->{
   \draw[line width=0.8pt] (0,0) -- (6,0);
   \foreach \c/\h in {1/1,4/2}
@@ -762,7 +754,7 @@ F_\kappa(z_1,\dots,z_n;q,t,a,b,c,d)=\sum_{(\nu,\mu)}a_\kappa^\mu(\nu)\,z^\nu F_\
   \node[anchor=north] at (3,-1.3) {$\kappa^-=(1,0,0,2,-1,0)$};}
   \end{scope}
   % (4) mu = (0,-2,1,0,0,-1)
-  \begin{scope}[shift={(14,-6.3)}]
+  \begin{scope}[shift={(14,-6.0)}]
   \uncover<4->{
   \draw[->,line width=0.8pt] (-7.2,0.5) -- (-1,0.5);
   \node[align=center,font=\footnotesize,anchor=north] at (-4.1,0.2) {permute and flip signs\\ in all possible ways};
@@ -770,25 +762,50 @@ F_\kappa(z_1,\dots,z_n;q,t,a,b,c,d)=\sum_{(\nu,\mu)}a_\kappa^\mu(\nu)\,z^\nu F_\
   \draw[fill=black!12] (2,0) rectangle (3,1);
   \foreach \r in {1,2} \draw[fill=black!12] (1,-\r) rectangle (2,-\r+1);
   \draw[fill=black!12] (5,-1) rectangle (6,0);
-  \node at (7.1,0.5) {$\cdots$};
+  \node[font=\footnotesize] at (3,1.7) {Example:};
   \node[anchor=north] at (3,-2.3) {$\mu=(0,-2,1,0,0,-1)$};}
   \end{scope}
 \end{tikzpicture}}
 \end{center}
 \end{frame}
 
+\begin{frame}{Main proof idea}
+\begin{itemize}
+  \item Use the double affine Hecke algebra of type $(C^\vee,C)$ (Sahi '99) to define a \important{refinement of the polynomial representation}, in which we have a formal copy $\mathsf Z_1,\dots,\mathsf Z_n$ of the variables $z_1,\dots,z_n$.
+  \item We construct polynomials $\widehat E_\kappa$ and $\widehat F_\kappa$ in the refined representation that satisfy
+  {\small
+  \[
+  \begin{gathered}
+  \widehat F_\kappa=\sum_{\nu}\important{\mathsf Z^\nu}\sum_{\mu}a_\kappa^\mu(\nu)\,F_\mu(z_1,\dots,z_n;q,t,a,b,c,d)\\
+  \Big\downarrow{\scriptstyle\,\important{\mathsf Z_i}\mapsto z_i}\\
+  F_\kappa(z_1,\dots,z_n;q,t,a,b,c,d)=\sum_{\nu}z^\nu\sum_{\mu}a_\kappa^\mu(\nu)\,F_\mu(z_1,\dots,z_n;q,t,a,b,c,d).
+  \end{gathered}
+  \]}
+\end{itemize}
+\end{frame}
+
 \begin{frame}{Two-line configurations}
-For $\kappa\in\ZZ^n$, $\nu\in\ZZ^n$ with $\nu_i\in\{0,\Sign(\kappa_i)\}$, and $\mu\in W_0\cdot\kappa^-$, we write
 \[
-a_\kappa^\mu(\nu)=\conf[1]{\sigma\\ \tau}.
+F_\kappa=\quad\sum_{\mathclap{\substack{\nu\in\ZZ^n\\ \nu_i\in\{0,\Sign(\kappa_i)\}}}}\quad z^\nu\quad\sum_{\mu\in W_0\cdot\kappa^-}a_\kappa^\mu(\nu)\,F_\mu
 \]
-\begin{columns}[T]
-\begin{column}{0.49\textwidth}
-\parbox[t][5.2em][t]{\linewidth}{\raggedright $\tau$ is obtained from $\kappa$ by putting a bar on $\kappa_i$ when $\nu_i=0$.\\[0.3em]
-Example: $\kappa=(2,-1,0,3,-2,1)$,\\ $\nu=(1,-1,0,0,-1,0)$.}
-\par\centering
-\begin{tikzpicture}[scale=0.3]
-  \useasboundingbox (-0.2,-3.1) rectangle (6.2,3.1);
+Each coefficient $a_\kappa^\mu(\nu)$ is encoded by a \important{two-line configuration} $\cconf[1]{\sigma\\ \tau}$:
+\begin{itemize}
+  \item the top row $\sigma\in\ZZ^n$ is obtained by augmenting the nonzero parts of $\mu$;
+  \item the bottom row $\tau\in(\ZZ\cup\overline{\ZZ})^n$, determined by $\kappa$ and $\nu$, has entries that are integers or barred integers.
+\end{itemize}
+\vspace{-0.3em}Example:
+\begin{center}
+\adjustbox{max width=\textwidth}{%
+\begin{tikzpicture}[scale=0.36]
+  % mu (top row)
+  \begin{scope}[shift={(0,5.6)}]
+  \draw[line width=0.8pt] (0,0) -- (6,0);
+  \draw[fill=black!12] (2,0) rectangle (3,1);
+  \foreach \r in {1,2} \draw[fill=black!12] (1,-\r) rectangle (2,-\r+1);
+  \draw[fill=black!12] (5,-1) rectangle (6,0);
+  \node[anchor=east] at (-0.8,0) {$\mu=(0,-2,1,0,0,-1)$};
+  \end{scope}
+  % kappa and nu (bottom row)
   \draw[line width=0.8pt] (0,0) -- (6,0);
   \foreach \c/\h in {1/2,4/3,6/1}
     \foreach \r in {1,...,\h}
@@ -796,71 +813,25 @@ Example: $\kappa=(2,-1,0,3,-2,1)$,\\ $\nu=(1,-1,0,0,-1,0)$.}
   \foreach \c/\h in {2/1,5/2}
     \foreach \r in {1,...,\h}
       \draw[fill=black!12] (\c-1,-\r) rectangle (\c,-\r+1);
-  \draw[fill=uibred!35] (0,0) rectangle (1,1);
-  \draw[fill=uibred!35] (1,-1) rectangle (2,0);
-  \draw[fill=uibred!35] (4,-1) rectangle (5,0);
+  \foreach \c in {1,6} \draw[fill=uibred!35] (\c-1,0) rectangle (\c,1);
+  \foreach \c in {2,5} \draw[fill=uibred!35] (\c-1,-1) rectangle (\c,0);
   \foreach \c in {4,6} \draw[fill=yellow!35] (\c-1,0) rectangle (\c,1);
-\end{tikzpicture}\par
-$\tau=(2,-1,0,\hb{3},-2,\hb{1})$
-\pause
-\end{column}
-\begin{column}{0.49\textwidth}
-\parbox[t][5.2em][t]{\linewidth}{\raggedright $\sigma=\mu\oplus\Sign(\mu)$ is obtained from $\mu$ by adding a basement cell to each nonzero column.\\[0.3em]
-Example: $\mu=(0,-2,1,0,0,-1)$.}
-\par\centering
-\begin{tikzpicture}[scale=0.3]
-  \useasboundingbox (-0.2,-3.1) rectangle (6.2,3.1);
-  \draw[line width=0.8pt] (0,0) -- (6,0);
-  \foreach \r in {2,3} \draw[fill=black!12] (1,-\r) rectangle (2,-\r+1);
-  \draw[fill=black!12] (2,1) rectangle (3,2);
-  \draw[fill=black!12] (5,-2) rectangle (6,-1);
-  \draw[fill=uibred!35] (1,-1) rectangle (2,0);
-  \draw[fill=uibred!35] (2,0) rectangle (3,1);
-  \draw[fill=uibred!35] (5,-1) rectangle (6,0);
-\end{tikzpicture}\par
-$\sigma=(0,-3,2,0,0,-2)$
-\pause
-\end{column}
-\end{columns}
-\medskip
-\[
-a_\kappa^\mu(\nu)=\conf[6]{0&-3&2&0&0&-2\\ 2&-1&0&\hb{3}&-2&\hb{1}}
-\]
-\end{frame}
-
-\begin{frame}{Two-line configurations}
-Fix a partition $\lambda$. The recurrence coefficients are encoded by the diagrams
-\[
-\conf[1]{\sigma\\ \tau},
-\]
-where
-\begin{itemize}
-  \item $\tau$ is a signed permutation of $\lambda$, potentially with some bars,
-  \item $\sigma$ is a signed permutation of $\lambda$ with its parts equal to $1$ replaced by $0$.
-\end{itemize}
-
-\bigskip
-Example: for $\lambda=(3,2,2,1,1,0)$,
-\[
-\conf[6]{0&-3&2&0&0&-2\\ 2&-1&0&\hb{3}&-2&\hb{1}}.
-\]
-\end{frame}
-
-\begin{frame}{Main proof idea}
-\begin{itemize}
-  \item Use the double affine Hecke algebra of type $(C^\vee,C)$ (Sahi '99) to define a \important{refinement of the polynomial representation}, in which we have a formal copy $\mathsf Z_1,\dots,\mathsf Z_n$ of the variables $z_1,\dots,z_n$.
-  \item We construct polynomials $\widehat E_\kappa$ and $\widehat F_\kappa$ in the refined representation that satisfy
-  \[
-  \widehat F_\kappa=\sum_{(\nu,\mu)}a_\kappa^\mu(\nu)\,\important{\mathsf Z^\nu} F_\mu
-  \quad\xrightarrow{\ \important{\mathsf Z_i}\mapsto z_i\ }\quad
-  F_\kappa=\sum_{(\nu,\mu)}a_\kappa^\mu(\nu)\,z^\nu F_\mu.
-  \]
-\end{itemize}
+  \node[font=\scriptsize] at (0.5,0.5) {$z_1$};
+  \node[font=\scriptsize] at (1.5,-0.5) {$z_2^{-1}$};
+  \node[font=\scriptsize] at (3.5,0.5) {$1$};
+  \node[font=\scriptsize] at (4.5,-0.5) {$z_5^{-1}$};
+  \node[font=\scriptsize] at (5.5,0.5) {$1$};
+  \node[anchor=east,align=right] at (-0.8,0) {$\kappa=(2,-1,0,3,-2,1)$\\ $\nu=(1,-1,0,0,-1,0)$};
+  % arrow and configuration
+  \draw[->,line width=0.8pt] (7,2.3) -- (9.5,2.3);
+  \node[anchor=west] at (10,2.3) {$a_\kappa^\mu(\nu)=\conf[6]{0&-3&2&0&0&-2\\ 2&-1&0&\hb{3}&-2&\hb{1}}$};
+\end{tikzpicture}}
+\end{center}
 \end{frame}
 
 \begin{frame}{Local rules}
 \begin{thmB}[BD--Williams '26]
-The \important{two-line configurations} are characterized by a family of \important{local rules}.
+The two-line configurations are characterized by a family of \important{local rules}.
 \end{thmB}
 Only the columns involved are represented; the other columns are the same on both sides. Here $m>\ell$ and $k>0$.
 
@@ -872,47 +843,48 @@ In the bulk (two consecutive columns):
 \]
 
 \medskip
-On the boundary (first column):
+On the boundary (first or last column):
 \[
 \conf{0 & \cdots\\ \hb{k} & \cdots}
 =-q^{k-1}ac\conf{0 & \cdots\\ \hb{-k} & \cdots}-q^{k-1}(a+c)\conf{0 & \cdots\\ -k & \cdots}.
 \]
-In total, there are around $90$ local rules ($43$ up to symmetry).
+In total, there are $73$ local rules.
 \end{frame}
 
 \begin{frame}[t]{A cyclic algorithm}
-Each local rule transports an \act{active column} to the next position, plus \important{smaller terms}, for some order on two-line configurations.
+Each local rule ``transports'' a column to the next position, plus \important{residual terms}.
 
-\only<1>{%
+\only<1-2>{%
 \begin{gather*}
-\conf{\act{m} & \ell\\ \act{-k} & 0}
-=t\conf{\ell & \act{m}\\ 0 & \act{-k}}+\underbrace{(1-t)\conf{m & \ell\\ 0 & -k}}_{\text{\small smaller terms}},\\
-\conf{\act{0} & \cdots\\ \act{\hb{k}} & \cdots}
-=-q^{k-1}ac\conf{\act{0} & \cdots\\ \act{\hb{-k}} & \cdots}\underbrace{-q^{k-1}(a+c)\conf{0 & \cdots\\ -k & \cdots}}_{\text{\small smaller terms}}.
-\end{gather*}}
-\only<2->{%
-We solve the system by induction, moving the active column cyclically:
+\conf{m & \ell\\ -k & 0}
+=\underbrace{t\conf{\ell & m\\ 0 & -k}}_{\text{\small transported term}}+\underbrace{(1-t)\conf{m & \ell\\ 0 & -k}}_{\text{\small residual terms}},\\
+\conf{0 & \cdots\\ \hb{k} & \cdots}
+=\underbrace{-q^{k-1}ac\conf{0 & \cdots\\ \hb{-k} & \cdots}}_{\text{\small transported term}}\underbrace{-q^{k-1}(a+c)\conf{0 & \cdots\\ -k & \cdots}}_{\text{\small residual terms}}.
+\end{gather*}
+\uncover<2>{\textbf{Fact:} There exists a partial order on two-line configurations for which the residual terms are smaller.}}
+\only<3->{%
+We solve the system by induction, moving the \act{active column} cyclically:
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
 \begin{align*}
-C&=\cconf[3]{\act{2}&0&0\\ \act{0}&1&-2}\\
-&\uncover<3->{{}=t\,\cconf[3]{0&\act{2}&0\\ 1&\act{0}&-2}+\text{\small smaller terms}}\\
-&\uncover<4->{{}=t\,\cconf[3]{0&0&\act{2}\\ 1&-2&\act{0}}+\text{\small smaller terms}}\\
-&\uncover<5->{{}=t\,\cconf[3]{0&0&\act{-2}\\ 1&-2&\act{0}}+\text{\small smaller terms}}
+\CC&=\cconf[3]{\act{2}&0&0\\ \act{0}&1&-2}\\
+&\uncover<4->{{}=t\,\cconf[3]{0&\act{2}&0\\ 1&\act{0}&-2}+\text{\small smaller terms}}\\
+&\uncover<5->{{}=t\,\cconf[3]{0&0&\act{2}\\ 1&-2&\act{0}}+\text{\small smaller terms}}\\
+&\uncover<6->{{}=t\,\cconf[3]{0&0&\act{-2}\\ 1&-2&\act{0}}+\text{\small smaller terms}}
 \end{align*}
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{align*}
-&\uncover<6->{{}=t^2\,\cconf[3]{0&\act{-2}&0\\ 1&\act{0}&-2}+\text{\small smaller terms}}\\
-&\uncover<7->{{}=t^2\,\cconf[3]{\act{-2}&0&0\\ \act{0}&1&-2}+\text{\small smaller terms}}\\
-&\uncover<8->{{}=qt^2\,\cconf[3]{\act{2}&0&0\\ \act{0}&1&-2}+\text{\small smaller terms}}
+&\uncover<7->{{}=t^2\,\cconf[3]{0&\act{-2}&0\\ 1&\act{0}&-2}+\text{\small smaller terms}}\\
+&\uncover<8->{{}=t^2\,\cconf[3]{\act{-2}&0&0\\ \act{0}&1&-2}+\text{\small smaller terms}}\\
+&\uncover<9->{{}=qt^2\,{\underbrace{\cconf[3]{\act{2}&0&0\\ \act{0}&1&-2}}_{=\,\CC}}+\text{\small smaller terms}}
 \end{align*}
 \end{column}
 \end{columns}
-\uncover<9>{%
+\uncover<10>{%
 \vspace{0.6em}
 \[
-(1-qt^2)\,C=\underbrace{(1-t)\cconf[3]{2&0&0\\ 1&0&-2}+t(1-t)\cconf[3]{0&0&-2\\ 1&0&-2}}_{\text{\small smaller terms}}.
+(1-qt^2)\,\CC=\underbrace{(1-t)\cconf[3]{2&0&0\\ 1&0&-2}+t(1-t)\cconf[3]{0&0&-2\\ 1&0&-2}}_{\text{\small smaller terms}}.
 \]}
 }
 \end{frame}
@@ -934,7 +906,7 @@ w_k&=\qk{k}\frac{-(a+c)+ac(b+d)\qk{k}}{1-abcd\qk{2k}},\\
 \widetilde w_k&=\frac{-(b+d)+bd(a+c)\qk{k}}{1-abcd\qk{2k}}.
 \end{alignat*}
 \end{theorem}
-This result refines the three-term relation for \notion{symmetric} Askey--Wilson polynomials $P_k=F_{(k)}+F_{(-k)}$.
+This result refines the three-term relation for \notion{symmetric} Askey--Wilson polynomials $K_{(k)}=F_{(k)}+F_{(-k)}$.
 
 \pause
 \smallskip
@@ -973,32 +945,12 @@ A simple two-line configuration $\conf[1]{\sigma\\ \tau}$ is the generating func
 \end{center}
 Together with the two-row recurrence (Theorem A), this gives:
 \begin{thmC}[BD--Williams '26]
-For $\mu\in\ZZ_{\ge0}^n$,
+For $\mu\in\NN^n$,
 \[
 \Top(F_\mu)=F^{\important{A}}_\mu,\qquad
-\Top\big(E_\mu(z_1,\dots,z_n;q,t)\big)=E^{\important{A}}_{\mu^{\mathrm{rev}}}(z_n,\dots,z_1;q^{-1},t^{-1}).
+\Top\big(E_\mu(z_1,\dots,z_n;q,t)\big)=E^{\important{A}}_{\mu^{\mathrm{rev}}}(z_n,\dots,z_1;q^{-1},t^{-1}),
 \]
-\end{thmC}
-\end{frame}
-
-\begin{frame}{Main results}
-For $k\in\ZZ$, let $\Sign(k)\in\{-1,0,1\}$ be the sign of $k$. For $\kappa\in\ZZ^n$, let $\kappa^-$ be obtained from $\kappa$ by decreasing the absolute value of each nonzero part by $1$.
-\begin{thmA}[two-row recurrence]
-For $\kappa\in\ZZ^n$,
-\[
-F_\kappa=\sum_{(\nu,\mu)}a_\kappa^\mu(\nu)\,z^\nu F_\mu,
-\]
-where $\mu\in W_0\cdot\kappa^-$ and $\nu\in\ZZ^n$ with $\nu_i\in\{0,\Sign(\kappa_i)\}$.
-\end{thmA}
-\begin{thmB}[local rules]
-The coefficients $a_\kappa^\mu(\nu)$ are uniquely characterized by a family of local rules.
-\end{thmB}
-\begin{thmC}[top homogeneous part]
-For $\mu\in\ZZ_{\ge0}^n$,
-\[
-\Top(F_\mu)=F^A_\mu,\qquad
-\Top\big(E_\mu(z_1,\dots,z_n;q,t)\big)=E^A_{\mu^{\mathrm{rev}}}(z_n,\dots,z_1;q^{-1},t^{-1}).
-\]
+where $\mu^{\mathrm{rev}}=(\mu_n,\dots,\mu_1)$.
 \end{thmC}
 \end{frame}
 
@@ -1007,23 +959,27 @@ For $\mu\in\ZZ_{\ge0}^n$,
 \begin{tikzpicture}[
   fam/.style={draw=uiblink2,rounded corners,line width=0.6pt,fill=uiblink2!5,align=center,inner sep=4pt,font=\small,minimum height=1.1cm},
   arr/.style={-latex,line width=0.8pt,uiblink2},
-  lab/.style={font=\footnotesize,text=black!60}]
+  lab/.style={font=\footnotesize,text=black!60},
+  thm/.style={font=\footnotesize,text=uiblink2},
+  rowlab/.style={anchor=east,align=right,font=\small\bfseries}]
   % line 1
-  \node[fam] (Acomb) at (0,0) {Type $A$\\ combinatorics};
-  \node[fam] (Arec) at (7,0) {Type $A$\\ two-row recurrence};
+  \node[rowlab] at (-1.4,0) {Type $A$\\ Macdonald};
+  \node[fam] (Acomb) at (0,0) {Multiline queue\\ formula\\ (CMW '22)};
+  \node[fam] (Arec) at (7,0) {Two-row\\ recurrence};
   \draw[arr] (Acomb) to[bend left=12] (Arec);
   % line 2
   \uncover<2->{
+  \node[rowlab] at (-1.4,-3) {Koornwinder};
   \node[fam] (DAHA) at (7,-3) {DAHA};
   \node[fam] (Krec) at (3.5,-3) {Two-row\\ recurrence};
   \node[fam] (LR) at (0,-3) {Local rules};
-  \draw[arr] (DAHA) -- node[lab,below] {Theorem A} (Krec);
-  \draw[arr] (Krec) -- node[lab,above] {$q$KZ} node[lab,below] {Theorem B} (LR);
-  \draw[arr,dashed] (LR) -- node[lab,left] {Theorem C} (Acomb);
+  \draw[arr] (DAHA) -- node[thm,below] {Theorem A} (Krec);
+  \draw[arr] (Krec) -- node[lab,above] {$q$KZ} node[thm,below] {Theorem B} (LR);
+  \draw[arr] (LR) -- node[thm,left] {Theorem C} node[lab,right] {Top part} (Acomb);
   }
   % line 3
   \uncover<3->{
-  \draw[arr,uibred] (Arec) to[bend left=12] (Acomb);
+  \draw[arr,uibred,dashed] (Arec) to[bend left=12] node[below,font=\footnotesize,text=uibred] {??} (Acomb);
   }
 \end{tikzpicture}
 \end{frame}
